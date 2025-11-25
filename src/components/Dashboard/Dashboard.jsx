@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, RefreshCw, Activity } from 'lucide-react';
 import MultiChainCards from './MultiChainCards';
 import useBridgeData from '../../hooks/useBridgeData';
 import './Dashboard.css';
 
-const Dashboard = () => {
+const Dashboard = ({ onBridgeStatusClick }) => {
   const { data, formattedData, health, isLoading, hasError, refetch } = useBridgeData();
   const [displayError, setDisplayError] = useState(null);
 
@@ -35,15 +35,25 @@ const Dashboard = () => {
           <h1>Bridge Monitoring Dashboard</h1>
           <p className="header-subtitle">Real-time monitoring of multi-chain bridge status</p>
         </div>
-        <button
-          className={`refresh-btn ${isLoading ? 'loading' : ''}`}
-          onClick={refetch}
-          disabled={isLoading}
-          title="Refresh data"
-        >
-          <RefreshCw size={18} className={isLoading ? 'spinning' : ''} />
-          <span>Refresh</span>
-        </button>
+        <div className="header-buttons">
+          <button
+            className="bridge-status-btn"
+            onClick={onBridgeStatusClick}
+            title="View detailed bridge status"
+          >
+            <Activity size={18} />
+            <span>Bridge Status</span>
+          </button>
+          <button
+            className={`refresh-btn ${isLoading ? 'loading' : ''}`}
+            onClick={refetch}
+            disabled={isLoading}
+            title="Refresh data"
+          >
+            <RefreshCw size={18} className={isLoading ? 'spinning' : ''} />
+            <span>Refresh</span>
+          </button>
+        </div>
       </div>
 
       {/* Error Banner */}
