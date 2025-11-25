@@ -1,11 +1,17 @@
 .bridge-status-page {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 24px;
+  min-height: 100%;
+  background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+  color: #e0e0ff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
 }
 
 .bridge-status-header {
-  margin-bottom: 30px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid rgba(102, 126, 234, 0.2);
 }
 
 .header-top {
@@ -13,55 +19,58 @@
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .header-top h1 {
   flex: 1;
   margin: 0;
-  font-size: 28px;
-  font-weight: 600;
-  color: #1a1a1a;
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
 }
 
 .back-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
-  background: #f0f0f0;
-  border: 1px solid #ddd;
+  padding: 10px 20px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 500;
-  color: #555;
+  font-weight: 600;
+  border: 1px solid rgba(102, 126, 234, 0.4);
+  background: transparent;
+  color: #a0a0ff;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .back-btn:hover {
-  background: #e0e0e0;
-  color: #333;
+  color: #ffffff;
+  border-color: rgba(102, 126, 234, 0.8);
+  transform: translateY(-2px);
 }
 
 .refresh-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
-  background: #4CAF50;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .refresh-btn:hover:not(:disabled) {
-  background: #45a049;
-  transform: scale(1.02);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
 }
 
 .refresh-btn:disabled {
@@ -70,7 +79,7 @@
 }
 
 .refresh-btn.loading {
-  background: #45a049;
+  background: linear-gradient(135deg, #5a6ed8 0%, #6a4294 100%);
 }
 
 .refresh-btn svg.spinning {
@@ -89,7 +98,7 @@
 .last-updated {
   margin: 0;
   font-size: 12px;
-  color: #999;
+  color: #808099;
   font-style: italic;
 }
 
@@ -97,12 +106,13 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
-  background: #fee;
-  border: 1px solid #fcc;
-  border-radius: 6px;
-  color: #c33;
-  margin-bottom: 20px;
+  padding: 16px 20px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 8px;
+  color: #fca5a5;
+  margin-bottom: 24px;
+  font-size: 14px;
 }
 
 .error-banner svg {
@@ -116,19 +126,20 @@
   justify-content: center;
   padding: 60px 20px;
   gap: 20px;
+  color: #e0e0ff;
 }
 
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid #f0f0f0;
-  border-top: 4px solid #4CAF50;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top: 4px solid #667eea;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
 .loading-container p {
-  color: #666;
+  color: #a0a0b0;
   font-size: 16px;
 }
 
@@ -139,10 +150,11 @@
 }
 
 .status-section {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(45, 45, 68, 0.8) 0%, rgba(30, 30, 46, 0.8) 100%);
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  box-shadow: 0 12px 32px rgba(15, 15, 30, 0.4);
 }
 
 .section-title {
@@ -150,9 +162,9 @@
   align-items: center;
   gap: 12px;
   margin: 0 0 20px 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: #e0e0ff;
 }
 
 .section-icon {
@@ -165,17 +177,36 @@
   gap: 16px;
 }
 
+.token-status-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.token-status-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.token-column-title {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #d0d0ff;
+}
+
 .status-card {
-  background: #f9f9f9;
-  border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 16px;
+  background: rgba(15, 15, 30, 0.6);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 10px;
+  padding: 20px;
   transition: all 0.3s ease;
 }
 
 .status-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-color: #ddd;
+  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow: 0 12px 24px rgba(102, 126, 234, 0.15);
+  transform: translateY(-3px);
 }
 
 .card-header {
@@ -189,7 +220,7 @@
   margin: 0;
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: #d0d0ff;
 }
 
 .card-header svg {
@@ -208,12 +239,17 @@
   align-items: center;
   gap: 12px;
   padding: 8px 0;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.status-row:last-child {
+  border-bottom: none;
 }
 
 .status-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #555;
+  font-size: 13px;
+  font-weight: 600;
+  color: #b0b0c0;
 }
 
 .status-value {
@@ -222,56 +258,75 @@
   gap: 8px;
 }
 
+.token-address {
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 12px;
+  color: #c8c8e4;
+  word-break: break-all;
+  text-align: right;
+}
+
+.bridge-status-block + .bridge-status-block {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(102, 126, 234, 0.1);
+}
+
 .status-badge {
   display: inline-block;
   padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .status-active {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: rgba(16, 185, 129, 0.2);
+  color: #86efac;
+  border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
 .status-paused {
-  background: #ffebee;
-  color: #c62828;
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
 }
 
 .status-unknown {
-  background: #fff3e0;
-  color: #f57f17;
+  background: rgba(251, 191, 36, 0.2);
+  color: #fcd34d;
+  border: 1px solid rgba(251, 191, 36, 0.4);
 }
 
 .icon-success {
-  color: #4CAF50;
+  color: #4ade80;
   flex-shrink: 0;
 }
 
 .icon-error {
-  color: #f44336;
+  color: #f87171;
   flex-shrink: 0;
 }
 
 .icon-warning {
-  color: #ff9800;
+  color: #fbbf24;
   flex-shrink: 0;
 }
 
 .error-text {
   font-size: 12px;
-  color: #f44336;
+  color: #fca5a5;
   margin-top: 8px;
   padding: 8px;
-  background: #ffebee;
+  background: rgba(239, 68, 68, 0.15);
   border-radius: 4px;
 }
 
 .no-data {
-  color: #999;
+  color: #a0a0b0;
   font-size: 14px;
   text-align: center;
   padding: 20px;
@@ -288,8 +343,9 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   padding: 20px;
-  border-radius: 6px;
+  border-radius: 10px;
   text-align: center;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
 }
 
 .summary-card h4 {
@@ -306,19 +362,21 @@
 }
 
 .badge-success {
-  background: #4CAF50;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
+  background: rgba(74, 222, 128, 0.2);
+  color: #bbf7d0;
+  padding: 6px 12px;
+  border-radius: 20px;
   font-size: 14px;
+  border: 1px solid rgba(74, 222, 128, 0.4);
 }
 
 .badge-error {
-  background: #f44336;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
+  background: rgba(248, 113, 113, 0.2);
+  color: #fecaca;
+  padding: 6px 12px;
+  border-radius: 20px;
   font-size: 14px;
+  border: 1px solid rgba(248, 113, 113, 0.4);
 }
 
 .count {
@@ -327,13 +385,13 @@
 }
 
 .count-error {
-  color: #999;
+  color: #b0b0c0;
   font-size: 16px;
 }
 
 .label {
   font-size: 13px;
-  color: #666;
+  color: #b0b0c0;
   font-weight: 500;
 }
 
@@ -349,7 +407,7 @@
   }
 
   .header-top h1 {
-    font-size: 22px;
+    font-size: 26px;
   }
 
   .back-btn,
@@ -361,15 +419,19 @@
     grid-template-columns: 1fr;
   }
 
+  .token-status-grid {
+    grid-template-columns: 1fr;
+  }
+
   .summary-grid {
     grid-template-columns: 1fr;
   }
 
   .status-section {
-    padding: 16px;
+    padding: 20px;
   }
 
   .section-title {
-    font-size: 16px;
+    font-size: 18px;
   }
 }

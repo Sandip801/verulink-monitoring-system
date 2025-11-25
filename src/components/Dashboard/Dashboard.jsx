@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { AlertCircle, RefreshCw, Activity } from 'lucide-react';
-import MultiChainCards from './MultiChainCards';
+import { AlertCircle, RefreshCw } from 'lucide-react';
 import useBridgeData from '../../hooks/useBridgeData';
 import './Dashboard.css';
 
-const Dashboard = ({ onBridgeStatusClick }) => {
+const Dashboard = () => {
   const { data, formattedData, health, isLoading, hasError, refetch } = useBridgeData();
   const [displayError, setDisplayError] = useState(null);
 
@@ -36,14 +35,6 @@ const Dashboard = ({ onBridgeStatusClick }) => {
           <p className="header-subtitle">Real-time monitoring of multi-chain bridge status</p>
         </div>
         <div className="header-buttons">
-          <button
-            className="bridge-status-btn"
-            onClick={onBridgeStatusClick}
-            title="View detailed bridge status"
-          >
-            <Activity size={18} />
-            <span>Bridge Status</span>
-          </button>
           <button
             className={`refresh-btn ${isLoading ? 'loading' : ''}`}
             onClick={refetch}

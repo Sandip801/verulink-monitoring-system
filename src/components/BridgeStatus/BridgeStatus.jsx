@@ -53,6 +53,17 @@ const BridgeStatus = ({ onBack }) => {
     );
   };
 
+  const AvailabilityBadge = ({ isEnabled }) => {
+    if (isEnabled === null) {
+      return <span className="status-badge status-unknown">Unknown</span>;
+    }
+    return isEnabled ? (
+      <span className="status-badge status-active">Available</span>
+    ) : (
+      <span className="status-badge status-paused">Unavailable</span>
+    );
+  };
+
   return (
     <div className="bridge-status-page">
       {/* Header */}
@@ -95,97 +106,7 @@ const BridgeStatus = ({ onBack }) => {
         </div>
       ) : (
         <div className="status-container">
-          {/* Bridge Settings Section */}
-          <div className="status-section">
-            <h2 className="section-title">
-              <span className="section-icon">🌉</span>
-              Aleo Bridge Settings
-            </h2>
-            {statusData?.bridgeSettings ? (
-              <div className="status-card">
-                <div className="status-row">
-                  <div className="status-label">
-                    <span>Bridge Status</span>
-                  </div>
-                  <div className="status-value">
-                    <StatusIcon isPaused={statusData.bridgeSettings.isPaused} />
-                    <StatusBadge isPaused={statusData.bridgeSettings.isPaused} />
-                  </div>
-                </div>
-                {statusData.bridgeSettings.error && (
-                  <div className="error-text">{statusData.bridgeSettings.error}</div>
-                )}
-              </div>
-            ) : (
-              <div className="status-card">
-                <p className="no-data">No bridge settings data available</p>
-              </div>
-            )}
-          </div>
-
-          {/* ETH Token Status Section */}
-          <div className="status-section">
-            <h2 className="section-title">
-              <span className="section-icon">🔴</span>
-              ETH Token Status
-            </h2>
-            <div className="status-grid">
-              {statusData?.ethTokenStatus && !statusData.ethTokenStatus.error ? (
-                Object.entries(statusData.ethTokenStatus).map(([tokenName, tokenData]) => (
-                  <div key={tokenName} className="status-card">
-                    <div className="card-header">
-                      <h3>{tokenName}</h3>
-                      <StatusIcon isPaused={tokenData.isPaused} />
-                    </div>
-                    <div className="card-body">
-                      <div className="status-row">
-                        <span className="label">Status:</span>
-                        <StatusBadge isPaused={tokenData.isPaused} />
-                      </div>
-                      {tokenData.error && (
-                        <div className="error-text">{tokenData.error}</div>
-                      )}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="status-card">
-                  <p className="no-data">No ETH token status data available</p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* BSC Token Status Section */}
-          <div className="status-section">
-            <h2 className="section-title">
-              <span className="section-icon">🟡</span>
-              BSC Token Status (vLink)
-            </h2>
-            {statusData?.bscTokenStatus ? (
-              <div className="status-card">
-                <div className="card-header">
-                  <h3>vLink Token</h3>
-                  <StatusIcon isPaused={statusData.bscTokenStatus.isPaused} />
-                </div>
-                <div className="card-body">
-                  <div className="status-row">
-                    <span className="label">Status:</span>
-                    <StatusBadge isPaused={statusData.bscTokenStatus.isPaused} />
-                  </div>
-                  {statusData.bscTokenStatus.error && (
-                    <div className="error-text">{statusData.bscTokenStatus.error}</div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="status-card">
-                <p className="no-data">No BSC token status data available</p>
-              </div>
-            )}
-          </div>
-
-          {/* Summary Section */}
+          {/* Status Summary */}
           <div className="status-section">
             <h2 className="section-title">
               <span className="section-icon">📊</span>
@@ -193,7 +114,7 @@ const BridgeStatus = ({ onBack }) => {
             </h2>
             <div className="summary-grid">
               <div className="summary-card">
-                <h4>Overall Bridge Status</h4>
+                <h4>Aleo Bridge</h4>
                 <p className="summary-value">
                   {statusData?.bridgeSettings?.isPaused ? (
                     <span className="badge-error">⚠️ Paused</span>
@@ -203,16 +124,28 @@ const BridgeStatus = ({ onBack }) => {
                 </p>
               </div>
               <div className="summary-card">
-                <h4>ETH Tokens</h4>
+                <h4>ETH Bridge</h4>
                 <p className="summary-value">
-                  {statusData?.ethTokenStatus &&
-                  !statusData.ethTokenStatus.error ? (
+                  {statusData?.ethBridgeStatus?.isPaused ? (
+                    <span className="badge-error">⚠️ Paused</span>
+                  ) : (
+                    <span className="badge-success">✅ Active</span>
+                  )}
+                </p>
+              </div>
+              <div className="summary-card">
+                <h4>Aleo Tokens</h4>
+                <p className="summary-value">
+                  {statusData?.aleoTokenStatus &&
+                  !statusData.aleoTokenStatus.error ? (
                     <span className="count">
-                      {Object.values(statusData.ethTokenStatus).filter(
-                        (t) => !t.error && !t.isPaused
-                      ).length}/
-                      {Object.entries(statusData.ethTokenStatus).filter(
-                        ([_, v]) => !v.error
+                      {Object.entries(statusData.aleoTokenStatus).filter(
+                        ([key, value]) => key !== 'error' && value && value.isPaused === false
+                      ).length}
+                      /
+                      {Object.entries(statusData.aleoTokenStatus).filter(
+                        ([key, value]) =>
+                          key !== 'error' && value && value.isPaused !== null && !value.error
                       ).length}{' '}
                       Active
                     </span>
@@ -222,7 +155,28 @@ const BridgeStatus = ({ onBack }) => {
                 </p>
               </div>
               <div className="summary-card">
-                <h4>BSC vLink Token</h4>
+                <h4>ETH Tokens</h4>
+                <p className="summary-value">
+                  {statusData?.ethTokenAvailability &&
+                  !statusData.ethTokenAvailability.error ? (
+                    <span className="count">
+                      {Object.entries(statusData.ethTokenAvailability).filter(
+                        ([key, value]) => key !== 'error' && value && value.isEnabled
+                      ).length}
+                      /
+                      {Object.entries(statusData.ethTokenAvailability).filter(
+                        ([key, value]) =>
+                          key !== 'error' && value && value.isEnabled !== null && !value.error
+                      ).length}{' '}
+                      Available
+                    </span>
+                  ) : (
+                    <span className="count-error">N/A</span>
+                  )}
+                </p>
+              </div>
+              <div className="summary-card">
+                <h4>BSC Bridge</h4>
                 <p className="summary-value">
                   {statusData?.bscTokenStatus?.isPaused ? (
                     <span className="badge-error">⚠️ Paused</span>
@@ -232,6 +186,155 @@ const BridgeStatus = ({ onBack }) => {
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Bridge Settings Section */}
+          <div className="status-section">
+            <h2 className="section-title">
+              <span className="section-icon">🌉</span>
+              Bridge Settings
+            </h2>
+            <div className="status-card">
+              {[
+                { id: 'aleo', label: 'Aleo Bridge', data: statusData?.bridgeSettings },
+                { id: 'eth', label: 'ETH Bridge', data: statusData?.ethBridgeStatus },
+              ].map(({ id, label, data }) => (
+                <div key={id} className="bridge-status-block">
+                  <div className="status-row">
+                    <div className="status-label">
+                      <span>{label}</span>
+                    </div>
+                    <div className="status-value">
+                      {data ? (
+                        <>
+                          <StatusIcon isPaused={data.isPaused} />
+                          <StatusBadge isPaused={data.isPaused} />
+                        </>
+                      ) : (
+                        <span className="status-badge status-unknown">No data</span>
+                      )}
+                    </div>
+                  </div>
+                  {data?.error && <div className="error-text">{data.error}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Token Status Section */}
+          <div className="status-section">
+            <h2 className="section-title">
+              <span className="section-icon">🪙</span>
+              Token Availability
+            </h2>
+            <div className="status-grid token-status-grid">
+              <div className="token-status-column">
+                <h3 className="token-column-title">Aleo Token Availability</h3>
+                {statusData?.aleoTokenStatus &&
+                !statusData.aleoTokenStatus.error &&
+                Object.keys(statusData.aleoTokenStatus).length ? (
+                  Object.entries(statusData.aleoTokenStatus)
+                    .filter(([key]) => key !== 'error')
+                    .map(([tokenName, tokenData]) => (
+                      <div key={tokenName} className="status-card">
+                        <div className="card-header">
+                          <h3>{tokenName}</h3>
+                          <AvailabilityBadge isEnabled={tokenData.isPaused === null ? null : !tokenData.isPaused} />
+                        </div>
+                        <div className="card-body">
+                          <div className="status-row">
+                            <span className="label">Availability:</span>
+                            <AvailabilityBadge isEnabled={tokenData.isPaused === null ? null : !tokenData.isPaused} />
+                          </div>
+                          {tokenData.tokenId && (
+                            <div className="status-row">
+                              <span className="label">Token ID:</span>
+                              <span className="token-address">{tokenData.tokenId}</span>
+                            </div>
+                          )}
+                          {tokenData.error && (
+                            <div className="error-text">{tokenData.error}</div>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                ) : (
+                  <div className="status-card">
+                    <p className="no-data">No Aleo token status data available</p>
+                  </div>
+                )}
+              </div>
+              <div className="token-status-column">
+                <h3 className="token-column-title">ETH Token Availability</h3>
+                {statusData?.ethTokenAvailability &&
+                !statusData.ethTokenAvailability.error &&
+                Object.keys(statusData.ethTokenAvailability).length ? (
+                  Object.entries(statusData.ethTokenAvailability)
+                    .filter(([key]) => key !== 'error')
+                    .map(([tokenName, tokenData]) => (
+                      <div key={tokenName} className="status-card">
+                        <div className="card-header">
+                          <h3>{tokenName}</h3>
+                          <AvailabilityBadge isEnabled={tokenData.isEnabled} />
+                        </div>
+                        <div className="card-body">
+                          <div className="status-row">
+                            <span className="label">Availability:</span>
+                            <AvailabilityBadge isEnabled={tokenData.isEnabled} />
+                          </div>
+                          <div className="status-row">
+                            <span className="label">Token Address:</span>
+                            <span className="token-address">{tokenData.tokenAddress}</span>
+                          </div>
+                          {tokenData.error && (
+                            <div className="error-text">{tokenData.error}</div>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                ) : (
+                  <div className="status-card">
+                    <p className="no-data">No ETH token availability data available</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* BSC Token Status Section */}
+          <div className="status-section">
+            <h2 className="section-title">
+              <span className="section-icon">🟡</span>
+              BSC Bridge Status
+            </h2>
+            {statusData?.bscTokenStatus || statusData?.bscBridgeStatus ? (
+              <div className="status-card">
+                <div className="card-header">
+                  <h3>vLink Token</h3>
+                  <StatusIcon isPaused={statusData?.bscBridgeStatus?.isPaused ?? statusData?.bscTokenStatus?.isPaused ?? null} />
+                </div>
+                <div className="card-body">
+                  <div className="status-row">
+                    <span className="label">On-Chain Bridge Status:</span>
+                    <StatusBadge isPaused={statusData?.bscBridgeStatus?.isPaused ?? null} />
+                  </div>
+                  <div className="status-row">
+                    <span className="label">Aleo Mapping Status:</span>
+                    <StatusBadge isPaused={statusData?.bscTokenStatus?.isPaused ?? null} />
+                  </div>
+                  {statusData?.bscBridgeStatus?.error && (
+                    <div className="error-text">{statusData.bscBridgeStatus.error}</div>
+                  )}
+                  {statusData?.bscTokenStatus?.error && (
+                    <div className="error-text">{statusData.bscTokenStatus.error}</div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="status-card">
+                <p className="no-data">No BSC token status data available</p>
+              </div>
+            )}
           </div>
         </div>
       )}

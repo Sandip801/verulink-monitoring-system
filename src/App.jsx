@@ -5,26 +5,28 @@ import Dashboard from './components/Dashboard/Dashboard';
 import BridgeStatus from './components/BridgeStatus/BridgeStatus';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState('dashboard');
 
-  const handleNavigateToBridgeStatus = () => {
-    setCurrentPage('bridge-status');
-  };
-
-  const handleNavigateToDashboard = () => {
-    setCurrentPage('dashboard');
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return <Dashboard />;
+      case 'bridge':
+        return <BridgeStatus onBack={() => setActiveTab('dashboard')} />;
+      default:
+        return (
+          <div className="placeholder-view">
+            <h2>Coming Soon</h2>
+            <p>We are still building the {activeTab} experience.</p>
+          </div>
+        );
+    }
   };
 
   return (
     <div className="App">
-      <Sidebar />
-      <div className="main-content">
-        {currentPage === 'dashboard' ? (
-          <Dashboard onBridgeStatusClick={handleNavigateToBridgeStatus} />
-        ) : (
-          <BridgeStatus onBack={handleNavigateToDashboard} />
-        )}
-      </div>
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <div className="main-content">{renderContent()}</div>
     </div>
   );
 }
