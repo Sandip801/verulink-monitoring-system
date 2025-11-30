@@ -1,0 +1,201 @@
+.analytics-overview {
+    padding: 24px;
+    background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+    min-height: 100%;
+    width: 100%;
+    color: #e0e0ff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    flex-direction: column;
+}
+
+.overview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.overview-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.refresh-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.refresh-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+}
+
+.refresh-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.refresh-btn .spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.error-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    border-radius: 8px;
+    color: #fca5a5;
+    margin-bottom: 24px;
+    font-size: 14px;
+}
+
+.error-banner svg {
+    flex-shrink: 0;
+}
+
+.overview-table-container {
+    flex: 1;
+    background: linear-gradient(135deg, rgba(45, 45, 68, 0.8) 0%, rgba(30, 30, 46, 0.8) 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    box-shadow: 0 12px 32px rgba(15, 15, 30, 0.4);
+    overflow: hidden;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 20px;
+    color: #e0e0ff;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-container p {
+    color: #a0a0b0;
+    font-size: 16px;
+}
+
+.overview-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: transparent;
+}
+
+.table-header {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+    color: #d0d0ff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.table-row {
+    transition: background-color 0.2s ease;
+}
+
+.table-row:hover {
+    background-color: rgba(102, 126, 234, 0.1);
+}
+
+.table-cell {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.table-row:last-child .table-cell {
+    border-bottom: none;
+}
+
+.cell-content {
+    font-size: 14px;
+    font-weight: 400;
+    color: #e0e0ff;
+}
+
+.table-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: #a0a0b0;
+    font-size: 14px;
+    font-style: italic;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .analytics-overview {
+        padding: 16px;
+    }
+
+    .overview-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .overview-title {
+        font-size: 24px;
+    }
+
+    .table-wrapper {
+        overflow-x: scroll;
+    }
+
+    .table-header,
+    .table-cell {
+        padding: 12px 16px;
+        font-size: 13px;
+    }
+}
+
