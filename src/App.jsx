@@ -21,10 +21,10 @@ function App() {
         return <BridgeStatus onBack={() => setActiveTab('dashboard')} />;
       case 'analytics-overview':
         return <BlockMonitoringOverview />;
-      case 'analytics-contract':
-        return <BlockMonitoringContract />;
       case 'analytics-network':
         return <BlockMonitoringNetwork />;
+      case 'analytics-contract':
+        return <BlockMonitoringContract />;
       case 'analytics-event':
         return <BlockMonitoringEvent />;
       case 'analytics-sync-blocks':

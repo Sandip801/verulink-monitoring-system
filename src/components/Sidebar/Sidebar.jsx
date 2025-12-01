@@ -15,8 +15,8 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
 
   const analyticsSubTabs = [
     { id: 'analytics-overview', label: 'Overview' },
-    { id: 'analytics-contract', label: 'Contract' },
     { id: 'analytics-network', label: 'Network' },
+    { id: 'analytics-contract', label: 'Contract' },
     { id: 'analytics-event', label: 'Event' },
     { id: 'analytics-sync-blocks', label: 'Sync Blocks' },
     { id: 'analytics-event-logs', label: 'Event Logs' }
