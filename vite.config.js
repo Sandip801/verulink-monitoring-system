@@ -10,7 +10,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true
+    sourcemap: false
   },
   define: {
     global: 'globalThis',
@@ -20,7 +20,8 @@ export default defineConfig({
       process: "process/browser",
       stream: "stream-browserify",
       zlib: "browserify-zlib",
-      util: 'util'
+      util: 'util',
+      'axios/lib/adapters/fetch.js': '/src/shims/axiosFetchAdapter.js'
     }
   }
 })

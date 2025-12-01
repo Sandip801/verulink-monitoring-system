@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import './App.css';
 import Sidebar from './components/Sidebar/Sidebar';
 import Dashboard from './components/Dashboard/Dashboard';
 import BridgeStatus from './components/BridgeStatus/BridgeStatus';
-import BlockMonitoringOverview from './components/Analytics/Overview/Overview';
-import BlockMonitoringContract from './components/Analytics/Contract/Contract';
-import BlockMonitoringNetwork from './components/Analytics/Network/Network';
-import BlockMonitoringEvent from './components/Analytics/Event/Event';
-import BlockMonitoringSyncBlock from './components/Analytics/SyncBlocks/SyncBlocks';
-import BlockMonitoringEventLogs from './components/Analytics/EventLogs/EventLogs';
+
+const BlockMonitoringOverview = lazy(() => import('./components/Analytics/Overview/Overview'));
+const BlockMonitoringNetwork = lazy(() => import('./components/Analytics/Network/Network'));
+const BlockMonitoringContract = lazy(() => import('./components/Analytics/Contract/Contract'));
+const BlockMonitoringEvent = lazy(() => import('./components/Analytics/Event/Event'));
+const BlockMonitoringSyncBlock = lazy(() => import('./components/Analytics/SyncBlocks/SyncBlocks'));
+const BlockMonitoringEventLogs = lazy(() => import('./components/Analytics/EventLogs/EventLogs'));
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -44,7 +45,18 @@ function App() {
   return (
     <div className="App">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="main-content">{renderContent()}</div>
+      <div className="main-content">
+        <Suspense
+          fallback={
+            <div className="placeholder-view">
+              <h2>Loading...</h2>
+              <p>Please wait while we prepare the {activeTab} view.</p>
+            </div>
+          }
+        >
+          {renderContent()}
+        </Suspense>
+      </div>
     </div>
   );
 }
