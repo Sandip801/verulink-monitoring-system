@@ -1,24 +1,24 @@
-import Web3 from 'web3';
+import { ethers } from 'ethers';
 
 const DEFAULT_ETH_RPC = 'https://eth.llamarpc.com';
 const DEFAULT_BSC_RPC = 'https://bsc-dataseed.binance.org';
-let ethWeb3Instance = null;
-let bscWeb3Instance = null;
+let ethProvider = null;
+let bscProvider = null;
 
-const getEthWeb3 = () => {
-  if (!ethWeb3Instance) {
+const getEthProvider = () => {
+  if (!ethProvider) {
     const rpcUrl = import.meta?.env?.VITE_ETH_RPC_URL || DEFAULT_ETH_RPC;
-    ethWeb3Instance = new Web3(rpcUrl);
+    ethProvider = new ethers.JsonRpcProvider(rpcUrl);
   }
-  return ethWeb3Instance;
+  return ethProvider;
 };
 
-const getBscWeb3 = () => {
-  if (!bscWeb3Instance) {
+const getBscProvider = () => {
+  if (!bscProvider) {
     const rpcUrl = import.meta?.env?.VITE_BSC_RPC_URL || DEFAULT_BSC_RPC;
-    bscWeb3Instance = new Web3(rpcUrl);
+    bscProvider = new ethers.JsonRpcProvider(rpcUrl);
   }
-  return bscWeb3Instance;
+  return bscProvider;
 };
 
 const ETH_BRIDGE_CONTRACT = '0x7440176A6F367D3Fad1754519bD8033EAF173133';
@@ -159,27 +159,30 @@ export const fetchAleoTokenStatus = async () => {
 export const fetchEthTokenAvailability = async () => {
   try {
     console.log('🟣 Fetching ETH token availability...');
-    const web3 = getEthWeb3();
+    const provider = getEthProvider();
 
-    const methodAbi = {
-      name: 'isEnabledToken',
-      type: 'function',
-      inputs: [{ name: 'token', type: 'address' }],
-      outputs: [{ type: 'bool' }],
-      stateMutability: 'view',
-    };
+    // Function signature: isEnabledToken(address)
+    const functionSignature = 'isEnabledToken(address)';
+    const encodedSelector = ethers.id(functionSignature).slice(0, 10);
 
     const results = {};
 
     const requests = Object.entries(ETH_TOKENS).map(async ([tokenName, tokenAddress]) => {
       try {
-        const data = web3.eth.abi.encodeFunctionCall(methodAbi, [tokenAddress]);
-        const response = await web3.eth.call({
+        // Encode the function call
+        const encoded = encodedSelector + ethers.AbiCoder.defaultAbiCoder()
+          .encode(['address'], [tokenAddress])
+          .slice(2);
+
+        // Make the call
+        const response = await provider.call({
           to: ETH_TOKEN_MANAGER_CONTRACT,
-          data,
+          data: encoded,
         });
 
-        const isEnabled = web3.eth.abi.decodeParameter('bool', response);
+        // Decode the response
+        const [isEnabled] = ethers.AbiCoder.defaultAbiCoder()
+          .decode(['bool'], response);
 
         return {
           tokenName,
@@ -219,24 +222,21 @@ export const fetchEthTokenAvailability = async () => {
  */
 export const fetchBscBridgeStatus = async () => {
   try {
-    console.log('🟡 Fetching BSC bridge status...');
-    const web3 = getBscWeb3();
+    console.log('🡡 Fetching BSC bridge status...');
+    const provider = getBscProvider();
 
-    const pausedAbi = {
-      name: 'paused',
-      type: 'function',
-      inputs: [],
-      outputs: [{ type: 'bool' }],
-      stateMutability: 'view',
-    };
+    // Function signature: paused()
+    const functionSignature = 'paused()';
+    const encodedSelector = ethers.id(functionSignature).slice(0, 10);
 
-    const data = web3.eth.abi.encodeFunctionCall(pausedAbi, []);
-    const response = await web3.eth.call({
+    const response = await provider.call({
       to: BSC_BRIDGE_CONTRACT,
-      data,
+      data: encodedSelector,
     });
 
-    const isPaused = web3.eth.abi.decodeParameter('bool', response);
+    // Decode the response
+    const [isPaused] = ethers.AbiCoder.defaultAbiCoder()
+      .decode(['bool'], response);
 
     return {
       status: isPaused ? 'paused' : 'active',
@@ -253,7 +253,7 @@ export const fetchBscBridgeStatus = async () => {
  */
 export const fetchBscTokenStatus = async () => {
   try {
-    console.log('🟡 Fetching BSC token status from Aleo mapping...');
+    console.log('🡡 Fetching BSC token status from Aleo mapping...');
 
     const url = `https://api.explorer.provable.com/v1/mainnet/program/vlink_token_service_cd_v3.aleo/mapping/status/{chain_id: 422842677816u128, token_id: ${BSC_VLINK_TOKEN_ID}}`;
 
@@ -300,23 +300,20 @@ export const fetchBscTokenStatus = async () => {
 export const fetchEthBridgeStatus = async () => {
   try {
     console.log('🔴 Fetching ETH bridge paused status...');
-    const web3 = getEthWeb3();
+    const provider = getEthProvider();
 
-    const pausedAbi = {
-      name: 'paused',
-      type: 'function',
-      inputs: [],
-      outputs: [{ type: 'bool' }],
-      stateMutability: 'view',
-    };
+    // Function signature: paused()
+    const functionSignature = 'paused()';
+    const encodedSelector = ethers.id(functionSignature).slice(0, 10);
 
-    const data = web3.eth.abi.encodeFunctionCall(pausedAbi, []);
-    const response = await web3.eth.call({
+    const response = await provider.call({
       to: ETH_BRIDGE_CONTRACT,
-      data,
+      data: encodedSelector,
     });
 
-    const isPaused = web3.eth.abi.decodeParameter('bool', response);
+    // Decode the response
+    const [isPaused] = ethers.AbiCoder.defaultAbiCoder()
+      .decode(['bool'], response);
 
     return {
       status: isPaused ? 'paused' : 'active',

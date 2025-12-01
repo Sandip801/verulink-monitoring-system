@@ -12,16 +12,16 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false
   },
-  define: {
-    global: 'globalThis',
-  },
-  resolve: {
-    alias: {
-      process: "process/browser",
-      stream: "stream-browserify",
-      zlib: "browserify-zlib",
-      util: 'util',
-      'axios/lib/adapters/fetch.js': '/src/shims/axiosFetchAdapter.js'
-    }
-  }
+  // define: {
+  //   global: 'globalThis',
+  // },
+  // resolve: {
+  //   alias: {
+  //     process: "process/browser",
+  //     stream: "stream-browserify",
+  //     zlib: "browserify-zlib",
+  //     util: 'util',
+  //     'axios/lib/adapters/fetch.js': '/src/shims/axiosFetchAdapter.js'
+  //   }
+  // }
 })
