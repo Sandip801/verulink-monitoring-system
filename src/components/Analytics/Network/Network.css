@@ -460,6 +460,7 @@
 @media (max-width: 768px) {
     .analytics-network {
         padding: 16px;
+        padding-top: 72px; /* Account for hamburger menu */
         gap: 20px;
     }
 
@@ -516,6 +517,7 @@
 @media (max-width: 480px) {
     .analytics-network {
         padding: 12px;
+        padding-top: 68px; /* Account for hamburger menu */
         gap: 16px;
     }
 

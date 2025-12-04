@@ -328,6 +328,7 @@
 @media (max-width: 768px) {
   .dashboard {
     padding: 16px;
+    padding-top: 72px; /* Account for hamburger menu (44px height + 16px top + 12px spacing) */
   }
 
   .dashboard-header {
@@ -409,6 +410,7 @@
 @media (max-width: 480px) {
   .dashboard {
     padding: 12px;
+    padding-top: 68px; /* Account for hamburger menu (40px height + 12px top + 16px spacing) */
   }
 
   .dashboard-header {

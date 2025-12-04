@@ -226,6 +226,7 @@
 @media (max-width: 768px) {
     .analytics-sync-blocks {
         padding: 16px;
+        padding-top: 72px; /* Account for hamburger menu */
     }
 
     .sync-blocks-title {

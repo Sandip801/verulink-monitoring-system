@@ -416,6 +416,7 @@
 @media (max-width: 768px) {
   .bridge-status-page {
     padding: 16px;
+    padding-top: 72px; /* Account for hamburger menu (44px height + 16px top + 12px spacing) */
   }
 
   .header-top {
@@ -495,6 +496,7 @@
 @media (max-width: 480px) {
   .bridge-status-page {
     padding: 12px;
+    padding-top: 68px; /* Account for hamburger menu (40px height + 12px top + 16px spacing) */
   }
 
   .header-top h1 {

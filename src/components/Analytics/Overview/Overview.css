@@ -184,6 +184,7 @@
 @media (max-width: 768px) {
     .analytics-overview {
         padding: 16px;
+        padding-top: 72px; /* Account for hamburger menu */
     }
 
     .overview-header {
@@ -223,6 +224,7 @@
 @media (max-width: 480px) {
     .analytics-overview {
         padding: 12px;
+        padding-top: 68px; /* Account for hamburger menu */
     }
 
     .overview-header {

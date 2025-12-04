@@ -17,9 +17,6 @@
 
 .sidebar-menu-toggle {
   display: none;
-  position: absolute;
-  top: 0;
-  left: 0;
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: white;
@@ -27,8 +24,6 @@
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
-  z-index: 10;
-  margin-bottom: 12px;
 }
 
 .sidebar-menu-toggle:hover {
@@ -155,7 +150,11 @@
 /* Responsive design */
 @media (max-width: 768px) {
   .sidebar-menu-toggle {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
   }
 
   .sidebar {
@@ -195,10 +194,20 @@
   }
 
   .sidebar-header {
-    padding-top: 1rem;
-    padding-left: 3rem;
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.5rem;
+    padding-left: 1rem;
     padding-right: 1rem;
     position: relative;
+  }
+
+  .sidebar-menu-toggle {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin-bottom: 0.75rem;
+    align-self: flex-start;
   }
 
   .sidebar-title {
@@ -222,9 +231,14 @@
   }
 
   .sidebar-header {
-    padding: 1rem;
-    padding-left: 3.5rem;
-    padding-right: 1rem;
+    padding: 0.75rem;
+    padding-top: 0.5rem;
+  }
+
+  .sidebar-menu-toggle {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 0.5rem;
   }
 
   .sidebar-title {

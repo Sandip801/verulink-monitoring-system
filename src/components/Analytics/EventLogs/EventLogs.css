@@ -411,6 +411,7 @@
 @media (max-width: 768px) {
     .analytics-event-logs {
         padding: 16px;
+        padding-top: 72px; /* Account for hamburger menu */
     }
 
     .event-logs-title {
