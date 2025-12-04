@@ -21,7 +21,8 @@ const Dashboard = () => {
   useEffect(() => {
     if (hasError) {
       setDisplayError('Failed to fetch bridge data. Retrying...');
-      const timer = setTimeout(() => setDisplayError(null), 5000);
+      const errorDisplayDuration = parseInt(import.meta.env.VITE_ERROR_DISPLAY_DURATION) || 5000;
+      const timer = setTimeout(() => setDisplayError(null), errorDisplayDuration);
       return () => clearTimeout(timer);
     }
   }, [hasError]);

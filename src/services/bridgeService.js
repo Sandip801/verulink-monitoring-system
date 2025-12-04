@@ -10,7 +10,7 @@ import { NETWORK_STATUS, DATA_FORMATS } from '../utils/constants';
 class BridgeService {
   constructor() {
     this.cache = new Map();
-    this.cacheTimeout = 30000; // 30 seconds
+    this.cacheTimeout = parseInt(import.meta.env.VITE_CACHE_TIMEOUT) || 30000;
   }
 
   /**
@@ -258,7 +258,7 @@ class BridgeService {
         console.error('Error in bridge update subscription:', error);
         callback({ error: error.message });
       }
-    }, 30000); // Update every 30 seconds
+    }, parseInt(import.meta.env.VITE_DASHBOARD_REFRESH_INTERVAL) || 30000);
 
     return () => {
       clearInterval(interval);

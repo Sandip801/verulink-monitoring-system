@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 
-const DEFAULT_ETH_RPC = 'https://eth.llamarpc.com';
-const DEFAULT_BSC_RPC = 'https://bsc-dataseed.binance.org';
+const DEFAULT_ETH_RPC = import.meta.env.VITE_ETH_RPC_URL || 'https://eth.llamarpc.com';
+const DEFAULT_BSC_RPC = import.meta.env.VITE_BSC_RPC_URL || 'https://bsc-dataseed.binance.org';
 let ethProvider = null;
 let bscProvider = null;
 
@@ -21,13 +21,13 @@ const getBscProvider = () => {
   return bscProvider;
 };
 
-const ETH_BRIDGE_CONTRACT = '0x7440176A6F367D3Fad1754519bD8033EAF173133';
-const ETH_TOKEN_MANAGER_CONTRACT = '0x28E761500e7Fd17b5B0A21a1eAD29a8E22D73170';
-const BSC_BRIDGE_CONTRACT = '0x397e47f5072b48681b170199551bdb7fbda136b7';
-const BSC_VLINK_TOKEN_ID = '3443843282313283355522573239085696902919850365217539366784739393210722344986field';
+const ETH_BRIDGE_CONTRACT = import.meta.env.VITE_ETH_BRIDGE_CONTRACT || '0x7440176A6F367D3Fad1754519bD8033EAF173133';
+const ETH_TOKEN_MANAGER_CONTRACT = import.meta.env.VITE_ETH_TOKEN_MANAGER_CONTRACT || '0x28E761500e7Fd17b5B0A21a1eAD29a8E22D73170';
+const BSC_BRIDGE_CONTRACT = import.meta.env.VITE_BSC_BRIDGE_CONTRACT || '0x397e47f5072b48681b170199551bdb7fbda136b7';
+const BSC_VLINK_TOKEN_ID = import.meta.env.VITE_BSC_VLINK_TOKEN_ID || '3443843282313283355522573239085696902919850365217539366784739393210722344986field';
 const ETH_TOKENS = {
-  USDC: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-  USDT: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+  USDC: (import.meta.env.VITE_ETH_USDC_ADDRESS || '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48').toLowerCase(),
+  USDT: (import.meta.env.VITE_ETH_USDT_ADDRESS || '0xdac17f958d2ee523a2206206994597c13d831ec7').toLowerCase(),
   ETH: '0x0000000000000000000000000000000000000001',
 };
 
@@ -38,7 +38,9 @@ const ETH_TOKENS = {
 export const fetchAleoBridgeSettings = async () => {
   try {
     console.log('🟣 Fetching Aleo bridge settings...');
-    const url = 'https://api.explorer.provable.com/v1/mainnet/program/vlink_token_bridge_v3.aleo/mapping/bridge_settings/3u8';
+    const aleoBaseUrl = import.meta.env.VITE_ALEO_API_URL || 'https://api.explorer.provable.com/v1/mainnet';
+    const bridgeProgram = import.meta.env.VITE_ALEO_TOKEN_BRIDGE_PROGRAM || 'vlink_token_bridge_v3.aleo';
+    const url = `${aleoBaseUrl}/program/${bridgeProgram}/mapping/bridge_settings/3u8`;
     
     console.log('🔗 Fetching from:', url);
     const response = await fetch(url);
@@ -86,12 +88,14 @@ export const fetchAleoTokenStatus = async () => {
     console.log('🟣 Fetching Aleo token status...');
 
     const tokenIds = {
-      vUSDC: '6088188135219746443092391282916151282477828391085949070550825603498725268775field',
-      vETH: '1381601714105276218895759962490543360839827276760458984912661726715051428034field',
-      vUSDT: '7311977476241952331367670434347097026669181172395481678807963832961201831695field',
+      vUSDC: import.meta.env.VITE_ALEO_VUSDC_FIELD_KEY || '6088188135219746443092391282916151282477828391085949070550825603498725268775field',
+      vETH: import.meta.env.VITE_ALEO_VETH_FIELD_KEY || '1381601714105276218895759962490543360839827276760458984912661726715051428034field',
+      vUSDT: import.meta.env.VITE_ALEO_VUSDT_FIELD_KEY || '7311977476241952331367670434347097026669181172395481678807963832961201831695field',
     };
 
-    const baseUrl = 'https://api.explorer.provable.com/v1/mainnet/program/vlink_token_service_v3.aleo/mapping/token_status';
+    const aleoBaseUrl = import.meta.env.VITE_ALEO_API_URL || 'https://api.explorer.provable.com/v1/mainnet';
+    const tokenServiceProgram = import.meta.env.VITE_ALEO_TOKEN_SERVICE_PROGRAM || 'vlink_token_service_v3.aleo';
+    const baseUrl = `${aleoBaseUrl}/program/${tokenServiceProgram}/mapping/token_status`;
 
     const results = {};
 
@@ -255,7 +259,9 @@ export const fetchBscTokenStatus = async () => {
   try {
     console.log('🡡 Fetching BSC token status from Aleo mapping...');
 
-    const url = `https://api.explorer.provable.com/v1/mainnet/program/vlink_token_service_cd_v3.aleo/mapping/status/{chain_id: 422842677816u128, token_id: ${BSC_VLINK_TOKEN_ID}}`;
+    const aleoBaseUrl = import.meta.env.VITE_ALEO_API_URL || 'https://api.explorer.provable.com/v1/mainnet';
+    const tokenServiceCdProgram = import.meta.env.VITE_ALEO_TOKEN_SERVICE_CD_PROGRAM || 'vlink_token_service_cd_v3.aleo';
+    const url = `${aleoBaseUrl}/program/${tokenServiceCdProgram}/mapping/status/{chain_id: 422842677816u128, token_id: ${BSC_VLINK_TOKEN_ID}}`;
 
     console.log('🔗 Fetching from:', url);
     const response = await fetch(url);

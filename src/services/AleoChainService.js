@@ -3,12 +3,14 @@ export const fetchAleoData = async () => {
     console.log('🟣 Fetching Aleo data...');
     
     const tokenIds = {
-      vUSDC: '6088188135219746443092391282916151282477828391085949070550825603498725268775field',
-      vETH: '1381601714105276218895759962490543360839827276760458984912661726715051428034field',
-      vUSDT: '7311977476241952331367670434347097026669181172395481678807963832961201831695field',
+      vUSDC: import.meta.env.VITE_ALEO_VUSDC_FIELD_KEY || '6088188135219746443092391282916151282477828391085949070550825603498725268775field',
+      vETH: import.meta.env.VITE_ALEO_VETH_FIELD_KEY || '1381601714105276218895759962490543360839827276760458984912661726715051428034field',
+      vUSDT: import.meta.env.VITE_ALEO_VUSDT_FIELD_KEY || '7311977476241952331367670434347097026669181172395481678807963832961201831695field',
     };
 
-    const baseUrl = 'https://api.explorer.provable.com/v1/mainnet/program/vlink_token_service_v3.aleo/mapping/total_supply';
+    const aleoBaseUrl = import.meta.env.VITE_ALEO_API_URL || 'https://api.explorer.provable.com/v1/mainnet';
+    const tokenServiceProgram = import.meta.env.VITE_ALEO_TOKEN_SERVICE_PROGRAM || 'vlink_token_service_v3.aleo';
+    const baseUrl = `${aleoBaseUrl}/program/${tokenServiceProgram}/mapping/total_supply`;
 
     // Fetch all token supplies in parallel
     const [vUSDCRaw, vETHRaw, vUSDTRaw] = await Promise.all([
@@ -50,8 +52,10 @@ export const fetchAleoVlinkSupply = async () => {
     console.log('🟣 Fetching Aleo vlink token supply...');
     
     // API endpoint for vlink_token_service_cd_v3.aleo program
-    // The mapping parameters: chain_id:422842677816u128, token_id:3443843282313283355522573239085696902919850365217539366784739393210722344986field
-    const url = 'https://api.explorer.provable.com/v1/mainnet/program/vlink_token_service_cd_v3.aleo/mapping/total_supply/{chain_id:422842677816u128, token_id:3443843282313283355522573239085696902919850365217539366784739393210722344986field}';
+    const aleoBaseUrl = import.meta.env.VITE_ALEO_API_URL || 'https://api.explorer.provable.com/v1/mainnet';
+    const tokenServiceCdProgram = import.meta.env.VITE_ALEO_TOKEN_SERVICE_CD_PROGRAM || 'vlink_token_service_cd_v3.aleo';
+    const bscVlinkTokenId = import.meta.env.VITE_BSC_VLINK_TOKEN_ID || '3443843282313283355522573239085696902919850365217539366784739393210722344986field';
+    const url = `${aleoBaseUrl}/program/${tokenServiceCdProgram}/mapping/total_supply/{chain_id:422842677816u128, token_id:${bscVlinkTokenId}}`;
     
     console.log('🔗 Fetching from:', url);
     

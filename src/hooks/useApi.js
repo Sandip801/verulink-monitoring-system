@@ -127,7 +127,7 @@ export const useApi = (apiFunction, dependencies = [], options = {}) => {
  * @param {Object} options - Configuration options
  * @returns {Object} API state and methods
  */
-export const usePolling = (apiFunction, interval = 30000, options = {}) => {
+export const usePolling = (apiFunction, interval = parseInt(import.meta.env.VITE_DASHBOARD_REFRESH_INTERVAL) || 30000, options = {}) => {
   const { enabled = true, ...apiOptions } = options;
   const intervalRef = useRef(null);
   

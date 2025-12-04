@@ -1,14 +1,14 @@
 const ETHEREUM_CONFIG = {
-  rpcUrl: 'https://eth-mainnet.g.alchemy.com/v2/demo',
-  bridgeContract: '0x28E761500e7Fd17b5B0A21a1eAD29a8E22D73170',
+  rpcUrl: import.meta.env.VITE_ETH_RPC_URL || 'https://eth-mainnet.g.alchemy.com/v2/demo',
+  bridgeContract: import.meta.env.VITE_ETH_TOKEN_MANAGER_CONTRACT || '0x28E761500e7Fd17b5B0A21a1eAD29a8E22D73170',
   tokens: {
     USDC: {
-      address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+      address: import.meta.env.VITE_ETH_USDC_ADDRESS || '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
       decimals: 6,
       name: 'USDC'
     },
     USDT: {
-      address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+      address: import.meta.env.VITE_ETH_USDT_ADDRESS || '0xdAC17F958D2ee523a2206206994597C13D831ec7',
       decimals: 6,
       name: 'USDT'
     },

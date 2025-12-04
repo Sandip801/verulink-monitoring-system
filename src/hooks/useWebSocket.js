@@ -20,8 +20,8 @@ export const useWebSocket = (url, options = {}) => {
   const {
     protocols = [],
     reconnect = true,
-    reconnectInterval = 3000,
-    maxReconnectAttempts = 5,
+    reconnectInterval = parseInt(import.meta.env.VITE_WS_RECONNECT_INTERVAL) || 3000,
+    maxReconnectAttempts = parseInt(import.meta.env.VITE_WS_MAX_RECONNECT_ATTEMPTS) || 5,
     onOpen = null,
     onClose = null,
     onError = null,

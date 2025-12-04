@@ -3,13 +3,14 @@
  */
 
 class AleoChainService {
-  static baseUrl = 'https://api.explorer.provable.com/v1/mainnet';
+  static baseUrl = import.meta.env.VITE_ALEO_API_URL || 'https://api.explorer.provable.com/v1/mainnet';
 
   /**
    * Fetch single token supply
    */
   static async fetchTokenSupply(tokenKey, tokenName) {
-    const endpoint = `${this.baseUrl}/program/vlink_token_service_v3.aleo/mapping/total_supply/${tokenKey}`;
+    const tokenServiceProgram = import.meta.env.VITE_ALEO_TOKEN_SERVICE_PROGRAM || 'vlink_token_service_v3.aleo';
+    const endpoint = `${this.baseUrl}/program/${tokenServiceProgram}/mapping/total_supply/${tokenKey}`;
     
     console.log(`🔗 Fetching Aleo ${tokenName}:`, endpoint);
 

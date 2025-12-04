@@ -112,9 +112,10 @@ const BlockMonitoringSyncBlock = () => {
         } finally {
             setLoading(false);
             if (message?.success) {
+                const errorDisplayDuration = parseInt(import.meta.env.VITE_ERROR_DISPLAY_DURATION) || 5000;
                 setTimeout(() => {
                     setMessage(null);
-                }, 5000);
+                }, errorDisplayDuration);
             }
         }
     }

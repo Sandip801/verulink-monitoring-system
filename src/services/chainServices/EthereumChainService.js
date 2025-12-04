@@ -121,9 +121,11 @@ class EthereumChainService {
   static async fetchAllBalances() {
     console.log('🔄 Starting Ethereum balances fetch...');
 
+    const usdcAddress = import.meta.env.VITE_ETH_USDC_ADDRESS || '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
+    const usdtAddress = import.meta.env.VITE_ETH_USDT_ADDRESS || '0xdAC17F958D2ee523a2206206994597C13D831ec7';
     const results = await Promise.allSettled([
-      this.fetchTokenBalance('0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', this.bridgeContract), // USDC
-      this.fetchTokenBalance('0xdAC17F958D2ee523a2206206994597C13D831ec7', this.bridgeContract), // USDT
+      this.fetchTokenBalance(usdcAddress, this.bridgeContract), // USDC
+      this.fetchTokenBalance(usdtAddress, this.bridgeContract), // USDT
       this.fetchEthBalance(this.bridgeContract) // ETH
     ]);
 
@@ -171,11 +173,13 @@ class EthereumChainService {
    * Get token name from address
    */
   static getTokenName(address) {
+    const usdcAddress = import.meta.env.VITE_ETH_USDC_ADDRESS || '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48';
+    const usdtAddress = import.meta.env.VITE_ETH_USDT_ADDRESS || '0xdAC17F958D2ee523a2206206994597C13D831ec7';
     const tokens = {
-      '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48': 'USDC',
-      '0xdAC17F958D2ee523a2206206994597C13D831ec7': 'USDT'
+      [usdcAddress.toLowerCase()]: 'USDC',
+      [usdtAddress.toLowerCase()]: 'USDT'
     };
-    return tokens[address] || 'Unknown';
+    return tokens[address?.toLowerCase()] || 'Unknown';
   }
 }
 

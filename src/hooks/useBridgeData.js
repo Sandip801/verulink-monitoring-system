@@ -99,7 +99,8 @@ const useBridgeData = () => {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 60000);
+    const refreshInterval = parseInt(import.meta.env.VITE_DASHBOARD_REFRESH_INTERVAL) || 60000;
+    const interval = setInterval(fetchData, refreshInterval);
     return () => clearInterval(interval);
   }, []);
 

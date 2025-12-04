@@ -137,7 +137,7 @@ export const sleep = (ms) => {
  * @param {number} delay - Initial delay in milliseconds
  * @returns {Promise} Promise that resolves with function result
  */
-export const retryWithBackoff = async (fn, maxRetries = 3, delay = 1000) => {
+export const retryWithBackoff = async (fn, maxRetries = parseInt(import.meta.env.VITE_MAX_RETRIES) || 3, delay = parseInt(import.meta.env.VITE_RETRY_DELAY) || 1000) => {
   for (let i = 0; i < maxRetries; i++) {
     try {
       return await fn();

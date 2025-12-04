@@ -6,10 +6,10 @@ import { fetchRequest, apiRequest } from './api';
 class BSCService {
   // BSCScan API configuration
   static BSCSCAN_API_URL = 'https://api.bscscan.com/api';
-  static BSCSCAN_API_KEY = '3BFB8Q5KV7ZAS23YQYDUZDGYCZZ8J4DVB8';
+  static BSCSCAN_API_KEY = import.meta.env.VITE_BSCSCAN_API_KEY || '3BFB8Q5KV7ZAS23YQYDUZDGYCZZ8J4DVB8';
   
   // Your actual BSC token contract address
-  static TOKEN_CONTRACT_ADDRESS = '0x6cfffa5bfd4277a04d83307feedfe2d18d944dd2';
+  static TOKEN_CONTRACT_ADDRESS = import.meta.env.VITE_BSC_TOKEN_CONTRACT || '0x6cfffa5bfd4277a04d83307feedfe2d18d944dd2';
 
   /**
    * Get minted tokens by calling totalSupply() on your BSC contract
@@ -23,7 +23,7 @@ class BSCService {
       try {
         console.log('🔗 Using direct BSC RPC call...');
         
-        const rpcUrl = 'https://bsc-dataseed1.binance.org/';
+        const rpcUrl = import.meta.env.VITE_BSC_RPC_URL || 'https://bsc-dataseed1.binance.org/';
         const rpcPayload = {
           jsonrpc: '2.0',
           method: 'eth_call',
@@ -80,7 +80,9 @@ class BSCService {
       }
       
       // Method 2: Try alternative BSC RPC endpoints
+      const defaultRpc = import.meta.env.VITE_BSC_RPC_URL || 'https://bsc-dataseed1.binance.org/';
       const alternativeRPCs = [
+        defaultRpc,
         'https://bsc-dataseed2.binance.org/',
         'https://bsc-dataseed3.binance.org/',
         'https://bsc-dataseed4.binance.org/'

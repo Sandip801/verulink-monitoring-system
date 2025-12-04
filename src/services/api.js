@@ -5,7 +5,7 @@ import { retryWithBackoff } from '../utils/helpers';
 /**
  * Base API configuration
  */
-const createApiInstance = (baseURL, timeout = 10000) => {
+const createApiInstance = (baseURL, timeout = parseInt(import.meta.env.VITE_API_TIMEOUT) || 10000) => {
   const instance = axios.create({
     baseURL,
     timeout,
@@ -80,7 +80,7 @@ export const aleoApi = createApiInstance(API_ENDPOINTS.ALEO_BASE_URL);
 /**
  * Generic API request wrapper with retry logic
  */
-export const apiRequest = async (requestFn, maxRetries = 3) => {
+export const apiRequest = async (requestFn, maxRetries = parseInt(import.meta.env.VITE_MAX_RETRIES) || 3) => {
   try {
     return await retryWithBackoff(requestFn, maxRetries);
   } catch (error) {
@@ -114,7 +114,7 @@ export const fetchRequest = async (url, options = {}) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    timeout: 15000, // 15 second timeout
+    timeout: parseInt(import.meta.env.VITE_FETCH_TIMEOUT) || 15000,
     ...options,
   };
 
@@ -155,9 +155,10 @@ export const fetchRequest = async (url, options = {}) => {
  */
 export const healthCheck = async (url) => {
   try {
+    const timeout = parseInt(import.meta.env.VITE_HEALTH_CHECK_TIMEOUT) || 5000;
     const response = await fetch(url, { 
       method: 'HEAD',
-      timeout: 5000 
+      timeout 
     });
     return response.ok;
   } catch (error) {

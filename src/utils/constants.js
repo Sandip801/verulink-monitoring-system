@@ -1,20 +1,20 @@
 // API Endpoints
 export const API_ENDPOINTS = {
-  ALEO_BASE_URL: 'https://api.explorer.provable.com/v1/mainnet',
-  BSC_RPC_URL: 'https://bsc-dataseed.binance.org/',
+  ALEO_BASE_URL: import.meta.env.VITE_ALEO_API_URL || 'https://api.explorer.provable.com/v1/mainnet',
+  BSC_RPC_URL: import.meta.env.VITE_BSC_RPC_URL || 'https://bsc-dataseed.binance.org/',
 };
 
 // Contract Addresses
 export const CONTRACT_ADDRESSES = {
-  BSC_BRIDGE_CONTRACT: '0x6cfffa5bfd4277a04d83307feedfe2d18d944dd2',
-  ALEO_BRIDGE_ADDRESS: 'aleo1er7zejft45vajxr7q0v44n4mw0v32ac6jww7xulnyzpur0wuygzq2atznq'
+  BSC_BRIDGE_CONTRACT: import.meta.env.VITE_BSC_TOKEN_CONTRACT || '0x6cfffa5bfd4277a04d83307feedfe2d18d944dd2',
+  ALEO_BRIDGE_ADDRESS: import.meta.env.VITE_ALEO_BRIDGE_ADDRESS || 'aleo1er7zejft45vajxr7q0v44n4mw0v32ac6jww7xulnyzpur0wuygzq2atznq'
 };
 
 // Refresh Intervals
 export const REFRESH_INTERVALS = {
-  DASHBOARD: 30000, // 30 seconds
-  CHARTS: 60000, // 1 minute
-  STATUS: 10000, // 10 seconds
+  DASHBOARD: parseInt(import.meta.env.VITE_DASHBOARD_REFRESH_INTERVAL) || 30000,
+  CHARTS: parseInt(import.meta.env.VITE_CHARTS_REFRESH_INTERVAL) || 60000,
+  STATUS: parseInt(import.meta.env.VITE_BRIDGE_STATUS_REFRESH_INTERVAL) || 10000,
 };
 
 // Chart Colors
