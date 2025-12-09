@@ -200,7 +200,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="header-nav" style={{ ...navStyle, '@media (max-width: 768px)': { display: 'none' } }}>
+          <nav className="header-nav" style={{ ...navStyle }}>
             {menuItems.map(({ id, icon: Icon, label, hasSubTabs }) => {
               if (id === 'analytics' && hasSubTabs) {
                 return (
