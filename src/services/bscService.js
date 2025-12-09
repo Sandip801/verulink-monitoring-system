@@ -1,5 +1,8 @@
 import { fetchRequest, apiRequest } from './api';
 
+// Function signatures
+const GET_LAST_SEQUENCE_SIGNATURE = '0x529d15cc'; // getLastReceivedSequence()
+
 /**
  * BSC Service - Real totalSupply() call for your contract
  */
@@ -10,6 +13,9 @@ class BSCService {
   
   // Your actual BSC token contract address
   static TOKEN_CONTRACT_ADDRESS = import.meta.env.VITE_BSC_TOKEN_CONTRACT || '0x6cfffa5bfd4277a04d83307feedfe2d18d944dd2';
+  
+  // BSC Bridge contract address
+  static BRIDGE_CONTRACT_ADDRESS = import.meta.env.VITE_BSC_BRIDGE_CONTRACT || '0x397e47F5072B48681b170199551bdB7fBDa136b7';
 
   /**
    * Get minted tokens by calling totalSupply() on your BSC contract
@@ -261,11 +267,15 @@ export const fetchBSCData = async () => {
   try {
     console.log('🟡 Fetching BSC data...');
     
-    // Call the existing BSCService.getMintedTokens() method
-    const totalSupply = await BSCService.getMintedTokens();
+    // Fetch total supply and last sequence in parallel
+    const [totalSupply, lastSequence] = await Promise.all([
+      BSCService.getMintedTokens(),
+      fetchBscLastReceivedSequence(),
+    ]);
     
     const bscData = {
       totalSupply: formatTokenValue(totalSupply, 6),
+      lastSequence: lastSequence,
       status: 'online',
     };
 
@@ -275,6 +285,7 @@ export const fetchBSCData = async () => {
     console.error('❌ Error fetching BSC data:', error);
     return {
       totalSupply: 'N/A',
+      lastSequence: 'N/A',
       status: 'error',
     };
   }
@@ -305,5 +316,62 @@ const formatTokenValue = (value, decimals) => {
   } catch (error) {
     console.error('Error formatting token value:', error);
     return value;
+  }
+};
+
+const fetchBscLastReceivedSequence = async () => {
+  try {
+    console.log('🟡 Fetching BSC last received sequence...');
+    
+    const rpcUrl = import.meta.env.VITE_BSC_RPC_URL || 'https://bsc-dataseed1.binance.org/';
+    const bridgeContract = BSCService.BRIDGE_CONTRACT_ADDRESS;
+
+    const payload = {
+      jsonrpc: '2.0',
+      method: 'eth_call',
+      params: [
+        {
+          to: bridgeContract,
+          data: GET_LAST_SEQUENCE_SIGNATURE
+        },
+        'latest'
+      ],
+      id: 1
+    };
+
+    console.log('🟡 BSC sequence RPC request:', payload);
+
+    const response = await fetch(rpcUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      console.warn('⚠️ BSC sequence RPC request failed:', response.status, response.statusText);
+      return 'N/A';
+    }
+
+    const data = await response.json();
+    console.log('🟡 BSC sequence RPC response:', data);
+
+    if (data.error) {
+      console.error('❌ RPC error:', data.error);
+      return 'N/A';
+    }
+
+    if (!data.result || data.result === '0x' || data.result === '0x0') {
+      console.log('⚠️ No sequence data, returning 0');
+      return '0';
+    }
+
+    const sequence = BigInt(data.result).toString();
+    console.log('✅ BSC last received sequence:', sequence);
+    return sequence;
+  } catch (error) {
+    console.error('❌ Error fetching BSC last received sequence:', error);
+    return 'N/A';
   }
 };

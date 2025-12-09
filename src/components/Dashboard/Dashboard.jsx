@@ -1,49 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowRight, CheckCircle2, AlertCircle, RefreshCw, Droplets } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { RefreshCw, ArrowRight, CheckCircle2, AlertCircle, Droplets } from 'lucide-react';
 import useBridgeData from '../../hooks/useBridgeData';
-import './BridgeDashboard.css';
+
+import AleoIcon from '../../assets/icons/aleo.svg';
+
+// Network Icons imported from SVG files
+const NETWORK_ICONS = {
+  'ALEO': AleoIcon,
+  'BSC': 'https://cryptologos.cc/logos/bnb-bnb-logo.svg?v=040',
+  'ETH': "https://cryptologos.cc/logos/versions/ethereum-eth-logo-diamond-purple.svg?v=040"
+};
 
 const Dashboard = () => {
   const { data, formattedData, health, isLoading, hasError, refetch } = useBridgeData();
   const [displayError, setDisplayError] = useState(null);
 
-  // Debug log
-  useEffect(() => {
-    console.log('📱 Dashboard state:', {
-      data,
-      formattedData,
-      health,
-      isLoading,
-      hasError,
-    });
-  }, [data, formattedData, health, isLoading]);
-
   useEffect(() => {
     if (hasError) {
       setDisplayError('Failed to fetch bridge data. Retrying...');
-      const errorDisplayDuration = parseInt(import.meta.env.VITE_ERROR_DISPLAY_DURATION) || 5000;
-      const timer = setTimeout(() => setDisplayError(null), errorDisplayDuration);
+      const timer = setTimeout(() => setDisplayError(null), 5000);
       return () => clearTimeout(timer);
     }
   }, [hasError]);
 
-  // Parse numeric values from formatted data
   const parseAmount = (value) => {
     if (!value || value === 'N/A') return 0;
-    // Remove commas and parse as float
     return parseFloat(value.toString().replace(/,/g, ''));
   };
 
-  // Build bridges array from real data
   const bridges = [
     {
       id: 'eth-aleo',
+      updated: data?.ethereum?.timestamp ? new Date(data.ethereum.timestamp).toLocaleTimeString() : 'N/A',
       source: {
         name: 'Ethereum',
-        networkId: 'ETH',
-        status: health?.ethereum?.status === 'online' ? 'Online' : 'Offline',
+        id: 'ETH',
         theme: 'blue',
-        logo: 'ETH',
+        lastSequence: data?.ethereum?.lastSequence || 'N/A',
         assets: [
           { symbol: 'USDC', amount: parseAmount(formattedData?.ethereum?.USDC) },
           { symbol: 'USDT', amount: parseAmount(formattedData?.ethereum?.USDT) },
@@ -52,76 +45,63 @@ const Dashboard = () => {
       },
       destination: {
         name: 'Aleo Network',
-        networkId: 'ALEO',
-        status: health?.aleo?.status === 'online' ? 'Online' : 'Offline',
+        id: 'ALEO',
         theme: 'purple',
-        logo: 'ALEO',
+        lastSequence: data?.aleo?.lastSequenceFromEth || 'N/A',
         assets: [
           { symbol: 'vUSDC', amount: parseAmount(formattedData?.aleo?.vUSDC) },
           { symbol: 'vUSDT', amount: parseAmount(formattedData?.aleo?.vUSDT) },
           { symbol: 'vETH', amount: parseAmount(formattedData?.aleo?.vETH) }
         ]
-      },
-      updated: data?.ethereum?.timestamp ? new Date(data.ethereum.timestamp).toLocaleTimeString() : 'N/A'
+      }
     },
     {
       id: 'aleo-bsc',
+      updated: data?.bsc?.timestamp ? new Date(data.bsc.timestamp).toLocaleTimeString() : 'N/A',
       source: {
         name: 'Aleo Network',
-        networkId: 'ALEO',
-        status: health?.aleo?.status === 'online' ? 'Online' : 'Offline',
+        id: 'ALEO',
         theme: 'purple',
-        logo: 'ALEO',
+        lastSequence: data?.aleo?.lastSequenceFromBsc || 'N/A',
         assets: [
           { symbol: 'ALEO LOCKED', amount: parseAmount(formattedData?.aleoVlink?.supply) }
         ]
       },
       destination: {
         name: 'BSC Network',
-        networkId: 'BSC',
-        status: health?.bsc?.status === 'online' ? 'Online' : 'Offline',
+        id: 'BSC',
         theme: 'yellow',
-        logo: 'BSC',
+        lastSequence: data?.bsc?.lastSequence || 'N/A',
         assets: [
           { symbol: 'MINTED BSC', amount: parseAmount(formattedData?.bsc?.data) }
         ]
-      },
-      updated: data?.bsc?.timestamp ? new Date(data.bsc.timestamp).toLocaleTimeString() : 'N/A'
+      }
     }
   ];
 
   return (
-    <div className="bridge-dashboard">
-      <div className="bridge-container">
+    <div className="dashboard-wrapper">
+      <div className="dashboard-container">
         
         {/* Header */}
-        <div className="bridge-header">
-          <div className="bridge-header-content">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ 
-                background: 'rgba(139, 92, 246, 0.1)',
-                padding: '0.75rem',
-                borderRadius: '0.75rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '1px solid rgba(139, 92, 246, 0.2)'
-              }}>
-                <Droplets size={24} color="#a78bfa" style={{ opacity: 0.7 }} />
-              </div>
-              <div>
-                <h1>Bridge Liquidity Monitor</h1>
-                <p>Real-time solvency and network status check</p>
-              </div>
+        <div className="dashboard-header">
+          <div className="header-title-group">
+            <div className="header-icon-box">
+              <Droplets size={24} className="header-icon" />
+            </div>
+            <div>
+              <h1>Bridge Liquidity Monitor</h1>
+              <p>Real-time solvency and network status check</p>
             </div>
           </div>
+          
           <button 
-            className={`refresh-button ${isLoading ? 'loading' : ''}`}
+            className={`refresh-btn ${isLoading ? 'spinning' : ''}`}
             onClick={refetch}
             disabled={isLoading}
           >
             <RefreshCw size={14} /> 
-            {isLoading ? 'Refreshing...' : 'Auto-refreshing'}
+            <span>{isLoading ? 'Refreshing...' : 'Auto-refreshing'}</span>
           </button>
         </div>
 
@@ -133,149 +113,115 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Loading State */}
-        {isLoading && !formattedData && (
-          <div className="loading-state">
-            <RefreshCw size={32} />
-            <p>Loading bridge data...</p>
-          </div>
-        )}
-
-        {/* Bridge Cards Loop */}
-        {!isLoading || formattedData ? (
-          bridges.map((bridge) => (
+        {/* Content Loop */}
+        <div className="cards-stack">
+          {bridges.map((bridge) => (
             <BridgeCard key={bridge.id} data={bridge} />
-          ))
-        ) : null}
+          ))}
+        </div>
 
       </div>
     </div>
   );
 };
 
-// --- Sub-Components ---
-
+// --- Sub Component: Bridge Card ---
 const BridgeCard = ({ data }) => {
   return (
     <div className="bridge-card">
       
-      {/* Card Header / Status Bar */}
-      <div className="bridge-card-header">
-        <div>
-          <span className="bridge-card-title">
-            {data.source.networkId} <span className="bridge-arrow-separator">→</span> {data.destination.networkId}
-          </span>
+      {/* Card Header */}
+      <div className="card-top-bar">
+        <div className="route-indicator">
+          <span className="network-tag">{data.source.id}</span>
+          <ArrowRight size={14} className="arrow-icon" />
+          <span className="network-tag">{data.destination.id}</span>
         </div>
-        <div className="bridge-card-timestamp">
-          <span>Last updated: {data.updated}</span>
+        <div className="timestamp">
+          Updated: {data.updated}
         </div>
       </div>
 
-      {/* Main Content Grid */}
-      <div className="bridge-content-grid">
+      {/* Main Body (Grid) */}
+      <div className="card-grid">
         
-        {/* Source Network */}
+        {/* Left: Source */}
         <NetworkColumn network={data.source} align="left" />
 
-        {/* Center Connector (The Bridge) */}
-        <div className="bridge-connector">
-          <div className="bridge-pipe-container">
-            <div className="bridge-pipe">
-              <div className="bridge-flow" />
-            </div>
+        {/* Center: Connector */}
+        <div className="connector-column">
+          <div className="connection-line">
+            <div className="connection-flow"></div>
           </div>
-          <div className="bridge-arrow-icon">
-            <ArrowRight size={16} />
+          <div className="synced-badge">
+            {/* <CheckCircle2 size={10} /> SYNCED */}
           </div>
         </div>
 
-        {/* Destination Network */}
+        {/* Right: Destination */}
         <NetworkColumn network={data.destination} align="right" />
 
       </div>
-      
-      {/* Solvency / Delta Footer */}
-      <div className="solvency-footer">
-        <div className="solvency-pairs">
-          {data.source.assets.map((asset, idx) => {
-            const destAsset = data.destination.assets[idx];
-            if (!destAsset) return null;
-            
-            const isEthToAleo = data.source.networkId === 'ETH';
-            const diff = asset.amount - destAsset.amount; 
-              
-            const isMatched = diff >= -1.0; // Normal if diff >= -1.0 (allowing small tolerance)
-            
-            return (
-              <div key={asset.symbol} className="solvency-pair">
-                <span className="solvency-label">{asset.symbol} Pair</span>
-                
-                {/* Visual Solvency Bar */}
-                <div className="solvency-bar-container">
-                  <div className="solvency-bar-left" />
-                  <div className={`solvency-bar-right ${isMatched ? 'matched' : 'unmatched'}`} />
-                </div>
 
-                <div className={`solvency-delta ${isMatched ? 'matched' : 'unmatched'}`}>
-                  {isMatched ? <CheckCircle2 size={12} /> : <AlertCircle size={12} />}
-                  <span>{diff > 0 ? '+' : ''}{diff.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                </div>
+      {/* Footer: Solvency Check */}
+      <div className="card-footer">
+        {data.source.assets.map((srcAsset, idx) => {
+          const destAsset = data.destination.assets[idx];
+          if (!destAsset) return null;
+
+          // Calculate Delta (Destination - Source)
+          const diff = srcAsset.amount - destAsset.amount;
+          // Ideally diff should be 0. We allow small variance.
+          const isHealthy = Math.abs(diff) < 1.0; 
+
+          return (
+            <div key={srcAsset.symbol} className="solvency-row">
+              <span className="solvency-label">{srcAsset.symbol} Pair</span>
+              
+              {/* Progress Bar Visual */}
+              <div className="solvency-track">
+                <div className={`solvency-fill ${isHealthy ? 'fill-green' : 'fill-amber'}`}></div>
               </div>
-            )
-          })}
-        </div>
+
+              {/* Numeric Delta */}
+              <div className={`solvency-value ${isHealthy ? 'text-green' : 'text-amber'}`}>
+                {isHealthy ? <CheckCircle2 size={12} /> : <AlertCircle size={12} />}
+                <span>{diff > 0 ? '+' : ''}{diff.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 };
 
+// --- Sub Component: Network Column ---
 const NetworkColumn = ({ network, align }) => {
-  // Theme map for dynamic colors
-  const themeClass = network.theme ? `theme-${network.theme}` : '';
-  
-  // Network SVG logos
-  const logos = {
-    'ALEO': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzYiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA3NiA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQ3Ljg4NiAwSDI5LjQ2MDFMMTMuNDY3OSA0Ni43NzA0SDIzLjIwNjhMMzYuMTYwOSA4LjYxNDgxSDQwLjg1MTNMNTMuODAzNiA0Ni43NzA0SDIzLjIwNjhMMjAuMTkzIDU1LjM4NTJINTYuNzA3M0w2NS4wODExIDgwSDc1LjEzMTRMNDcuODg2IDBaIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0yLjEwMjc4IDgwSDExLjgxNzRMMjAuMTkzIDU1LjM4NTJMMTAuNTIxMyA1NS4zODUyTDIuMTAyNzggODBaIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0zLjgxNDgyIDQ2Ljc3MDRMMC44NjgxNjQgNTUuMzg1MkgxMC41MjEzTDEzLjQ2NzkgNDYuNzcwNEgzLjgxNDgyWiIgZmlsbD0iI0Y1RjVGNSIvPgo8L3N2Zz4K',
-    'ETH': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExLjk5OTggMTIuODc1TDYuNDk5ODUgOS44NzVMMTEuOTk5OCAyLjI1TDE3LjQ5OTggOS44NzVMMTEuOTk5OCAxMi44NzVaIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xMS45OTk4IDIxLjc1TDYuNDk5ODUgMTAuODc1TDExLjk5OTggMTMuODc1TDE3LjQ5OTggMTAuODc1TDExLjk5OTggMjEuNzVaIiBmaWxsPSIjRjVGNUY1IiBvcGFjaXR5PSIwLjYiLz4KPC9zdmc+',
-    'BSC': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDRMOC41IDcuNUwxMiAxMUwxNS41IDcuNUwxMiA0WiIgZmlsbD0iI0Y1RjVGNSIvPgo8cGF0aCBkPSJNNCAxMkw3LjUgOC41TDExIDEyTDcuNSAxNS41TDQgMTJaIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0yMCAxMkwxNi41IDguNUwxMyAxMkwxNi41IDE1LjVMMjAgMTJaIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xMiAyMEw4LjUgMTYuNUwxMiAxM0wxNS41IDE2LjVMMTIgMjBaIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xMiA4LjVMMTAuMjUgMTBMMTIgMTEuNzVMMTMuNzUgMTBMMTIgOC41WiIgZmlsbD0iI0Y1RjVGNSIgb3BhY2l0eT0iMC42Ii8+CjxwYXRoIGQ9Ik0xMiAxNS41TDEwLjI1IDE0TDEyIDEyLjI1TDEzLjc1IDE0TDEyIDE1LjVaIiBmaWxsPSIjRjVGNUY1IiBvcGFjaXR5PSIwLjYiLz4KPC9zdmc+'
-  };
-
   return (
-    <div className={`network-column align-${align}`}>
+    <div className={`network-col col-${align}`}>
       
       {/* Network Badge */}
-      <div className={`network-badge ${themeClass}`}>
-        {network.logo ? (
-          logos[network.logo] ? (
-            <img src={logos[network.logo]} alt={network.name} style={{ width: '16px', height: '16px' }} />
-          ) : (
-            <span style={{ fontSize: '1.2em' }}>{network.logo}</span>
-          )
-        ) : (
-          <div className="status-indicator">
-            {network.status === 'Online' && (
-              <span className="status-ping"></span>
-            )}
-            <span className="status-dot"></span>
-          </div>
-        )}
+      <div className={`network-pill theme-${network.theme}`}>
+        <img src={NETWORK_ICONS[network.id]} alt={network.id} className="network-logo" />
         <span>{network.name}</span>
       </div>
 
-      {/* Asset List */}
-      <div className="asset-list">
-        {network.assets.map((asset) => (
-          <div key={asset.symbol} className="asset-item">
-            <span className="asset-label">
-              {asset.symbol}
-            </span>
-            <div className="asset-amount">
+      {/* Sequence Number Display */}
+      {network.lastSequence && network.lastSequence !== 'N/A' && (
+        <div className="sequence-indicator">
+          <span className="sequence-label">Last Packet #</span>
+          <span className="sequence-value">{network.lastSequence}</span>
+        </div>
+      )}
+
+      {/* Assets */}
+      <div className="asset-group">
+        {network.assets.map(asset => (
+          <div key={asset.symbol} className="asset-row">
+            <div className="asset-name">{asset.symbol}</div>
+            <div className="asset-val" data-full={asset.amount}>
               {asset.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              
-              {/* Hover to see full precision (Tooltip concept) */}
-              <div className="asset-tooltip">
-                {asset.amount}
-              </div>
             </div>
           </div>
         ))}

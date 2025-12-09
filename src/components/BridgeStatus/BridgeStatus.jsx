@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AlertCircle, CheckCircle, XCircle, RefreshCw, Database } from 'lucide-react';
 import { fetchAllBridgeStatuses } from '../../services/bridgeStatusService';
-import '../Dashboard/BridgeDashboard.css';
 
 const BridgeStatus = ({ onBack }) => {
   const [statusData, setStatusData] = useState(null);
@@ -85,45 +84,27 @@ const BridgeStatus = ({ onBack }) => {
   };
 
   return (
-    <div className="bridge-dashboard">
-      <div className="bridge-container">
+    <div className="dashboard-wrapper">
+      <div className="dashboard-container">
         {/* Header */}
-        <div className="bridge-header">
-          <div className="bridge-header-content">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ 
-                background: 'rgba(59, 130, 246, 0.1)',
-                padding: '0.75rem',
-                borderRadius: '0.75rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '1px solid rgba(59, 130, 246, 0.2)'
-              }}>
-                <Database size={24} color="#60a5fa" style={{ opacity: 0.7 }} />
-              </div>
-
-              <div>
-                <h1>Bridge Status Monitor</h1>
-                <p>Real-time bridge availability and token status</p>
-              </div>
+        <div className="dashboard-header">
+          <div className="header-title-group">
+            <div className="header-icon-box">
+              <Database size={24} className="header-icon" />
+            </div>
+            <div>
+              <h1>Bridge Status Monitor</h1>
+              <p>Real-time bridge availability and token status</p>
             </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
-            <button
-              className={`refresh-button ${isLoading ? 'loading' : ''}`}
-              onClick={fetchStatus}
-              disabled={isLoading}
-            >
-              <RefreshCw size={14} />
-              {isLoading ? 'Refreshing...' : 'Refresh'}
-            </button>
-            {lastUpdated && (
-              <span style={{ fontSize: '0.75rem', color: '#64748b', fontFamily: 'monospace' }}>
-                Last updated: {lastUpdated.toLocaleTimeString()}
-              </span>
-            )}
-          </div>
+          <button
+            className={`refresh-btn ${isLoading ? 'spinning' : ''}`}
+            onClick={fetchStatus}
+            disabled={isLoading}
+          >
+            <RefreshCw size={14} />
+            <span>{isLoading ? 'Refreshing...' : 'Refresh'}</span>
+          </button>
         </div>
 
         {/* Error Banner */}
@@ -135,9 +116,60 @@ const BridgeStatus = ({ onBack }) => {
         )}
 
         {isLoading && !statusData ? (
-          <div className="loading-state">
-            <RefreshCw size={32} />
-            <p>Loading bridge status...</p>
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            minHeight: '400px',
+            gap: '1.5rem'
+          }}>
+            <div style={{ position: 'relative', width: '80px', height: '80px' }}>
+              {/* Outer spinning ring */}
+              <div style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                border: '3px solid transparent',
+                borderTopColor: '#a855f7',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+              }}></div>
+              {/* Middle spinning ring */}
+              <div style={{
+                position: 'absolute',
+                top: '10px',
+                left: '10px',
+                width: 'calc(100% - 20px)',
+                height: 'calc(100% - 20px)',
+                border: '3px solid transparent',
+                borderTopColor: '#60a5fa',
+                borderRadius: '50%',
+                animation: 'spin 1.5s linear infinite reverse'
+              }}></div>
+              {/* Inner icon */}
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                animation: 'pulse 2s ease-in-out infinite'
+              }}>
+                <Database size={32} color="#c084fc" />
+              </div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <p style={{ 
+                fontSize: '1.125rem', 
+                fontWeight: '600', 
+                color: '#e2e8f0',
+                marginBottom: '0.5rem',
+                animation: 'pulse 2s ease-in-out infinite'
+              }}>Loading Bridge Status</p>
+              <p style={{ fontSize: '0.875rem', color: '#94a3b8' }}>
+                Fetching real-time data from contracts...
+              </p>
+            </div>
           </div>
         ) : (
         <div>

@@ -1,288 +1,50 @@
-* {
+/* App.css */
+
+/* 1. Global Reset: Remove default browser margins and force full height */
+html, body, #root {
+  height: 100%;
+  width: 100%;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #0f0f1e;
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  margin: 0;
-  padding: 0;
+*, *::before, *::after {
+  box-sizing: inherit;
 }
 
-#root {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
+/* 2. App Container: Flex layout with header on top */
 .App {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 100vw;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
+  min-height: 100vh;
+  /* width: 100vw; */
+  background-color: #0f172a;
+  color: var(--bridge-text-main);
 }
 
-/* Main Content - Takes Remaining Space */
+/* 3. Main Content: Takes remaining space and scrolls independently */
 .main-content {
   flex: 1;
   width: 100%;
-  min-width: 0;
-  height: calc(100vh - 4rem);
   overflow-y: auto;
-  overflow-x: hidden;
   position: relative;
-  z-index: 1;
+  padding: 0;
+  margin-top: 0;
+  padding-top: 64px;
+  background-color: #0f172a;
 }
 
-/* Scrollbar styling */
+/* Optional: Custom Scrollbar for Webkit (Chrome/Safari) */
 .main-content::-webkit-scrollbar {
-  width: 0px;
+  width: 8px;
 }
 
 .main-content::-webkit-scrollbar-track {
-  background: rgba(102, 126, 234, 0.1);
+  background: var(--bridge-bg);
 }
 
 .main-content::-webkit-scrollbar-thumb {
-  background: rgba(102, 126, 234, 0.5);
+  background-color: var(--bridge-border);
   border-radius: 4px;
-}
-
-.main-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(102, 126, 234, 0.7);
-}
-
-.placeholder-view {
-  height: 100%;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 20px;
-  color: #e0e0ff;
-  background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
-  text-align: center;
-}
-
-.placeholder-view h2 {
-  font-size: 28px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.placeholder-view p {
-  font-size: 16px;
-  color: #a0a0b0;
-  margin: 0;
-}
-
-/* Large Desktop (1400px and above) */
-@media (min-width: 1400px) {
-  .main-content {
-    width: 100%;
-  }
-}
-
-/* Desktop (1200px - 1399px) - Default styles apply */
-
-/* Large Tablet / Small Desktop (1024px - 1199px) */
-@media (max-width: 1199px) and (min-width: 1024px) {
-  .main-content {
-    width: 100%;
-  }
-}
-
-/* Tablet Responsive (769px - 1023px) */
-@media (max-width: 1023px) and (min-width: 769px) {
-  .main-content {
-    width: 100%;
-  }
-
-  .mobile-menu-toggle {
-    display: none !important;
-  }
-
-  .placeholder-view h2 {
-    font-size: 24px;
-  }
-
-  .placeholder-view p {
-    font-size: 14px;
-  }
-}
-
-
-
-/* Mobile Menu Toggle Button - Only visible on mobile when sidebar is closed */
-.mobile-menu-toggle {
-  display: none;
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 1001;
-  background: linear-gradient(135deg, #312e81 0%, #7c3aed 100%);
-  border: none;
-  color: white;
-  padding: 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
-  width: 44px;
-  height: 44px;
-  align-items: center;
-  justify-content: center;
-}
-
-.mobile-menu-toggle:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-}
-
-.mobile-menu-toggle:active {
-  transform: scale(0.95);
-}
-
-.mobile-menu-toggle--hidden {
-  display: none !important;
-}
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .mobile-menu-toggle {
-    display: flex !important;
-  }
-
-  .App {
-    flex-direction: column;
-    height: 100vh;
-    width: 100%;
-    overflow: hidden;
-  }
-
-  .main-content {
-    width: 100%;
-    max-width: 100vw;
-    height: 100vh;
-    padding-top: 0;
-    overflow-x: hidden;
-  }
-
-  /* Ensure all page containers take full width on mobile */
-  .main-content > * {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-  }
-
-  .sidebar-overlay {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 998;
-    opacity: 0;
-    animation: fadeIn 0.3s ease forwards;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Small Mobile Responsive */
-@media (max-width: 480px) {
-  .mobile-menu-toggle {
-    top: 12px;
-    left: 12px;
-    padding: 10px;
-    width: 44px;
-    height: 44px;
-  }
-
-  .main-content {
-    padding-top: 0;
-    width: 100%;
-    max-width: 100vw;
-  }
-
-  .placeholder-view {
-    padding: 16px;
-  }
-
-  .placeholder-view h2 {
-    font-size: 20px;
-  }
-
-  .placeholder-view p {
-    font-size: 13px;
-  }
-}
-
-/* Extra Small Mobile (320px - 374px) */
-@media (max-width: 374px) {
-  .mobile-menu-toggle {
-    top: 10px;
-    left: 10px;
-    padding: 8px;
-    width: 40px;
-    height: 40px;
-  }
-
-  .placeholder-view h2 {
-    font-size: 18px;
-  }
-
-  .placeholder-view p {
-    font-size: 12px;
-  }
-}
-
-/* Landscape Mobile */
-@media (max-width: 768px) and (orientation: landscape) {
-  .mobile-menu-toggle {
-    top: 10px;
-    left: 10px;
-    padding: 8px;
-    width: 40px;
-    height: 40px;
-  }
-}
-
-/* Touch Device Optimizations */
-@media (hover: none) and (pointer: coarse) {
-  .mobile-menu-toggle {
-    min-width: 44px;
-    min-height: 44px;
-    width: 44px;
-    height: 44px;
-  }
-}
-
-/* Ensure hamburger menu is hidden on larger screens */
-@media (min-width: 769px) {
-  .mobile-menu-toggle {
-    display: none !important;
-  }
 }

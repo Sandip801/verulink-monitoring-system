@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, Database, TrendingUp, AlertTriangle, ChevronDown, Menu, X } from 'lucide-react';
-import '../Dashboard/BridgeDashboard.css';
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const isAnalyticsActive = activeTab.startsWith('analytics-');
