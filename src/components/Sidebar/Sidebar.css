@@ -2,7 +2,7 @@
   width: 256px;
   background: linear-gradient(180deg, #312e81 0%, #7c3aed 100%);
   color: white;
-  min-height: 100vh;
+  min-height: 100%;
   padding: 1.5rem 1rem;
   position: fixed;
   left: 0;

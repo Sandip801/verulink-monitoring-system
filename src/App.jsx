@@ -45,7 +45,7 @@ function App() {
   return (
     <div className="App">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="main-content">
+      <main className="main-content">
         <Suspense
           fallback={
             <div className="placeholder-view">
@@ -56,7 +56,7 @@ function App() {
         >
           {renderContent()}
         </Suspense>
-      </div>
+      </main>
     </div>
   );
 }
