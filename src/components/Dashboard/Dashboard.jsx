@@ -204,7 +204,10 @@ const BridgeCard = ({ data }) => {
             const isEthToAleo = data.source.networkId === 'ETH';
             const diff = asset.amount - destAsset.amount; 
               
-            const isMatched = diff >= -1.0; // Normal if diff >= -1.0 (allowing small tolerance)
+            // Directional solvency check
+            const isMatched = isEthToAleo
+              ? diff >= -1.0 // ETH→Aleo: source should exceed destination
+              : (destAsset.amount - asset.amount) >= -1.0; // Other: destination should exceed source (example logic)
             
             return (
               <div key={asset.symbol} className="solvency-pair">
