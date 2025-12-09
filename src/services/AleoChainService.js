@@ -12,11 +12,12 @@ export const fetchAleoData = async () => {
     const tokenServiceProgram = import.meta.env.VITE_ALEO_TOKEN_SERVICE_PROGRAM || 'vlink_token_service_v3.aleo';
     const baseUrl = `${aleoBaseUrl}/program/${tokenServiceProgram}/mapping/total_supply`;
 
-    // Fetch all token supplies in parallel
-    const [vUSDCRaw, vETHRaw, vUSDTRaw] = await Promise.all([
+    // Fetch all token supplies and last sequence in parallel
+    const [vUSDCRaw, vETHRaw, vUSDTRaw, sequences] = await Promise.all([
       fetchTokenSupply(baseUrl, tokenIds.vUSDC, 'vUSDC'),
       fetchTokenSupply(baseUrl, tokenIds.vETH, 'vETH'),
       fetchTokenSupply(baseUrl, tokenIds.vUSDT, 'vUSDT'),
+      fetchAleoLastReceivedSequence(),
     ]);
 
     const aleoData = {
@@ -25,6 +26,8 @@ export const fetchAleoData = async () => {
         vETH: formatTokenValue(vETHRaw, 18),
         vUSDT: formatTokenValue(vUSDTRaw, 6),
       },
+      lastSequenceFromEth: sequences.eth,
+      lastSequenceFromBsc: sequences.bsc,
       status: 'online',
     };
 
@@ -38,6 +41,8 @@ export const fetchAleoData = async () => {
         vETH: 'N/A',
         vUSDT: 'N/A',
       },
+      lastSequenceFromEth: 'N/A',
+      lastSequenceFromBsc: 'N/A',
       status: 'error',
     };
   }
@@ -176,5 +181,68 @@ const formatTokenValue = (value, decimals) => {
   } catch (error) {
     console.error('❌ Error formatting token value:', error);
     return value;
+  }
+};
+
+const fetchAleoLastReceivedSequence = async () => {
+  try {
+    console.log('🟣 Fetching Aleo last received sequence...');
+    
+    const aleoBaseUrl = import.meta.env.VITE_ALEO_API_URL || 'https://api.explorer.provable.com/v1/mainnet';
+    const bridgeProgram = import.meta.env.VITE_ALEO_BRIDGE_PROGRAM || 'vlink_token_bridge_v3.aleo';
+    
+    // Query the last_received_sequence mapping from the bridge program
+    // The mapping key is typically the source chain ID (e.g., for Ethereum it's '1field' or '2field' for BSC)
+    const ethereumChainId = import.meta.env.VITE_ALEO_ETH_CHAIN_ID || '27234042785u128';
+    const bscChainId = import.meta.env.VITE_ALEO_BSC_CHAIN_ID || '422842677816u128';
+    const url = `${aleoBaseUrl}/program/${bridgeProgram}/mapping/sequences/${ethereumChainId}`;
+    const bscURL = `${aleoBaseUrl}/program/${bridgeProgram}/mapping/sequences/${bscChainId}`;
+
+    console.log('🟣 Aleo ETH sequence URL:', url);
+    console.log('🟣 Aleo BSC sequence URL:', bscURL);
+
+
+    const response = await fetch(url);
+    const bscResponse = await fetch(bscURL);
+    
+    if (!response.ok) {
+      console.warn('⚠️ Aleo sequence fetch failed:', response.status, response.statusText);
+      return 'N/A';
+    }
+    if (!bscResponse.ok) {
+      console.warn('⚠️ Aleo BSC sequence fetch failed:', bscResponse.status, bscResponse.statusText);
+      return 'N/A';
+    }
+
+    const data = await response.json();
+    console.log('🟣 Aleo ETH sequence response:', data);
+
+    const bscData = await bscResponse.json();
+    console.log('🟣 Aleo BSC sequence response:', bscData);
+
+    // Aleo API returns the value in the 'data' field
+    // Format is typically "123u64" or "123u128"
+    let ethSequence = '0';
+    let bscSequence = '0';
+
+    if (data) {
+      ethSequence = data.toString().replace(/u(64|128)$/i, '').trim();
+      console.log('ethSequence:', ethSequence);
+      console.log('✅ Aleo last received ETH sequence:', ethSequence);
+    } else {
+      console.log('⚠️ No ETH sequence data found');
+    }
+
+    if (bscData) {
+      bscSequence = bscData.toString().replace(/u(64|128)$/i, '').trim();
+      console.log('✅ Aleo last received BSC sequence:', bscSequence);
+    } else {
+      console.log('⚠️ No BSC sequence data found');
+    }
+
+    return { eth: ethSequence, bsc: bscSequence };
+  } catch (error) {
+    console.error('❌ Error fetching Aleo last received sequence:', error);
+    return { eth: 'N/A', bsc: 'N/A' };
   }
 };

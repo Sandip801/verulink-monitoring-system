@@ -1,6 +1,7 @@
 const ETHEREUM_CONFIG = {
-  rpcUrl: import.meta.env.VITE_ETH_RPC_URL || 'https://eth-mainnet.g.alchemy.com/v2/demo',
+  rpcUrl: import.meta.env.VITE_ETH_RPC_URL || 'https://eth.llamarpc.com',
   bridgeContract: import.meta.env.VITE_ETH_TOKEN_MANAGER_CONTRACT || '0x28E761500e7Fd17b5B0A21a1eAD29a8E22D73170',
+  bridgeManagerContract: import.meta.env.VITE_ETH_BRIDGE_MANAGER_CONTRACT || '0x7440176A6F367D3Fad1754519bD8033EAF173133',
   tokens: {
     USDC: {
       address: import.meta.env.VITE_ETH_USDC_ADDRESS || '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
@@ -20,16 +21,20 @@ const ETHEREUM_CONFIG = {
   }
 };
 
+// Function signature for getLastReceivedSequence()
+const GET_LAST_SEQUENCE_SIGNATURE = '0x529d15cc';
+
 export const fetchEthereumData = async () => {
   try {
     console.log('\n🔴 ========== ETHEREUM DATA FETCH ==========');
     console.log('📍 Bridge Contract: ' + ETHEREUM_CONFIG.bridgeContract);
     console.log('🌐 RPC Endpoint: ' + ETHEREUM_CONFIG.rpcUrl);
     
-    const [usdcData, usdtData, ethData] = await Promise.all([
+    const [usdcData, usdtData, ethData, lastSequence] = await Promise.all([
       fetchTokenBalance('USDC', ETHEREUM_CONFIG.tokens.USDC.address),
       fetchTokenBalance('USDT', ETHEREUM_CONFIG.tokens.USDT.address),
       fetchNativeBalance('ETH'),
+      fetchLastReceivedSequence(),
     ]);
 
     const ethereumData = {
@@ -38,6 +43,7 @@ export const fetchEthereumData = async () => {
         USDT: formatTokenValue(usdtData, 6),
         ETH: formatTokenValue(ethData, 18),
       },
+      lastSequence: lastSequence,
       status: 'online',
     };
 
@@ -52,6 +58,7 @@ export const fetchEthereumData = async () => {
         USDT: 'N/A',
         ETH: 'N/A',
       },
+      lastSequence: 'N/A',
       status: 'error',
     };
   }
@@ -171,6 +178,65 @@ const fetchNativeBalance = async (tokenName) => {
     return balance;
   } catch (error) {
     console.error('   ❌ Error fetching ' + tokenName + ' balance:', error);
+    return 'N/A';
+  }
+};
+
+const fetchLastReceivedSequence = async () => {
+  try {
+    console.log('\n📝 Fetching Last Received Sequence Number');
+    console.log('   Bridge Contract: ' + ETHEREUM_CONFIG.bridgeManagerContract);
+    
+    const payload = {
+      jsonrpc: '2.0',
+      method: 'eth_call',
+      params: [
+        {
+          to: ETHEREUM_CONFIG.bridgeManagerContract,
+          data: GET_LAST_SEQUENCE_SIGNATURE
+        },
+        'latest'
+      ],
+      id: Date.now()
+    };
+
+    console.log('   📤 RPC Request:');
+    console.log('      Method: eth_call');
+    console.log('      Function: getLastReceivedSequence()');
+
+    const response = await fetch(ETHEREUM_CONFIG.rpcUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      throw new Error('HTTP Error: ' + response.status + ' ' + response.statusText);
+    }
+
+    const result = await response.json();
+    
+    console.log('   📥 RPC Response:');
+    console.log('      Hex: ' + result.result);
+
+    if (result.error) {
+      console.error('   ❌ RPC Error:', result.error.message);
+      return 'N/A';
+    }
+
+    if (!result.result || result.result === '0x') {
+      console.log('   ⚠️  No sequence number found');
+      return '0';
+    }
+
+    const sequence = BigInt(result.result).toString();
+    console.log('   ✅ Last Sequence Number: ' + sequence);
+    
+    return sequence;
+  } catch (error) {
+    console.error('   ❌ Error fetching last sequence:', error);
     return 'N/A';
   }
 };
