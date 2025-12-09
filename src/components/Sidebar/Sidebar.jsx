@@ -33,7 +33,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
 
   const handleSubTabClick = (subTabId) => {
     setActiveTab(subTabId);
-    setIsAnalyticsExpanded(false);
     setIsMobileMenuOpen(false);
   };
 
