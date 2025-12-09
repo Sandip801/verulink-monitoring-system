@@ -252,7 +252,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
 
           {/* Mobile Menu Button */}
           <button
-            style={{ ...mobileMenuButtonStyle, '@media (max-width: 768px)': { display: 'flex' } }}
+            style={mobileMenuButtonStyle}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="mobile-menu-btn"
           >
