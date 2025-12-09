@@ -4,7 +4,7 @@ import './Sidebar.css';
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const isAnalyticsActive = activeTab.startsWith('analytics-');
-  const [isAnalyticsExpanded, setIsAnalyticsExpanded] = useState(false);
+  const [isAnalyticsExpanded, setIsAnalyticsExpanded] = useState(isAnalyticsActive);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
