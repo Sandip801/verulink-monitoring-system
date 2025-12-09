@@ -197,9 +197,25 @@ const BridgeCard = ({ data }) => {
       {/* Solvency / Delta Footer */}
       <div className="solvency-footer">
         <div className="solvency-pairs">
-          {data.source.assets.map((asset, idx) => {
-            const destAsset = data.destination.assets[idx];
-            if (!destAsset) return null;
+          {data.source.assets.map((asset) => {
+            // Find the matching destination asset by symbol
+            const destAsset = data.destination.assets.find(a => a.symbol === asset.symbol);
+            if (!destAsset) {
+              // Optionally, display a warning or skip this asset
+              return (
+                <div key={asset.symbol} className="solvency-pair unmatched">
+                  <span className="solvency-label">{asset.symbol} Pair</span>
+                  <div className="solvency-bar-container">
+                    <div className="solvency-bar-left" />
+                    <div className="solvency-bar-right unmatched" />
+                  </div>
+                  <div className="solvency-delta unmatched">
+                    <AlertCircle size={12} />
+                    <span>Missing destination asset</span>
+                  </div>
+                </div>
+              );
+            }
             
             const isEthToAleo = data.source.networkId === 'ETH';
             const diff = asset.amount - destAsset.amount; 
